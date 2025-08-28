@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import AuthTestWrapper from "@/components/AuthTestWrapper";
 
 function DashboardPageContent() {
   const { user } = useUser();
@@ -434,8 +435,10 @@ function DashboardPageContent() {
 
 export default function DashboardPage() {
   return (
-    <ErrorBoundary>
-      <DashboardPageContent />
-    </ErrorBoundary>
+    <AuthTestWrapper>
+      <ErrorBoundary>
+        <DashboardPageContent />
+      </ErrorBoundary>
+    </AuthTestWrapper>
   );
 }
