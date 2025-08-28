@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Users, 
   CheckCircle2, 
-  Clock, 
-  Plus,
+  Clock,
   BarChart3,
   TrendingUp,
   Zap,
@@ -143,7 +142,7 @@ export default function SimpleDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <motion.div
               key={stat.title}
               variants={itemVariants}
@@ -216,14 +215,14 @@ export default function SimpleDashboard() {
                     href: "/billing",
                     color: "from-yellow-500 to-orange-500"
                   }
-                ].map((action, index) => (
+                ].map((action) => (
                   <motion.div
                     key={action.title}
                     whileHover={{ y: -3, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 + 0.5 }}
+                    transition={{ delay: 0.5 }}
                   >
                     <Link href={action.href}>
                       <Card className="h-full glass-effect border-none hover:shadow-lg transition-all duration-300 cursor-pointer group">

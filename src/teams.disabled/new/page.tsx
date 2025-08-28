@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to prevent prerendering issues with Convex
+export const dynamic = 'force-dynamic';
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
