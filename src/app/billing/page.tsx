@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { 
   CheckCircle, 
@@ -27,7 +28,7 @@ import {
 } from "lucide-react";
 // Stripe.js not required when using direct Payment Links
 
-export default function BillingPage() {
+function BillingContent() {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -752,5 +753,13 @@ export default function BillingPage() {
         </motion.div>
       )}
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen p-6" />}> 
+      <BillingContent />
+    </Suspense>
   );
 }
