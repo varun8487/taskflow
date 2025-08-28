@@ -4,7 +4,7 @@ import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/../convex/_generated/api';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2025-08-27.basil',
 });
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
           
           // Update user subscription in Convex
           await convex.mutation(api.users.updateUserSubscription, {
-            clerkId: session.metadata?.clerkUserId!,
+            clerkId: session.metadata?.clerkUserId || '',
             subscriptionTier: 'pro',
             subscriptionStatus: 'active',
             stripeCustomerId: session.customer as string,
@@ -109,10 +109,9 @@ export async function POST(req: NextRequest) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
         
-        if (invoice.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(
-            invoice.subscription as string
-          );
+        const subscriptionId = (invoice as unknown as { subscription?: string }).subscription;
+        if (subscriptionId) {
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           
           const customer = await stripe.customers.retrieve(
             subscription.customer as string

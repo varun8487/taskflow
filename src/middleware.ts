@@ -34,7 +34,7 @@ export default clerkMiddleware(async (auth, req) => {
     try {
       await auth.protect();
       console.log(`Access granted to protected route: ${req.nextUrl.pathname}`);
-    } catch (error) {
+    } catch {
       console.log(`Access denied to ${req.nextUrl.pathname}, redirecting to sign-in`);
       const signInUrl = new URL('/sign-in', req.url);
       signInUrl.searchParams.set('redirect_url', req.nextUrl.pathname);

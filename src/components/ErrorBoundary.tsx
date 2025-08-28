@@ -63,8 +63,8 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
             <ol className="list-decimal list-inside space-y-1">
               <li>Go to <a href="https://dashboard.clerk.dev" className="text-blue-600 hover:underline">Clerk Dashboard</a></li>
               <li>Find your TaskFlow application</li>
-              <li>Navigate to "JWT Templates"</li>
-              <li>Create new template named "convex"</li>
+              <li>Navigate to &quot;JWT Templates&quot;</li>
+              <li>Create new template named &quot;convex&quot;</li>
               <li>Restart the application</li>
             </ol>
           </div>

@@ -58,7 +58,7 @@ export const getTeamAnalytics = query({
       }
       
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, { tasksCreated: number; tasksCompleted: number; commentsAdded: number; filesUploaded: number; }>);
 
     // Daily activity over time
     const dailyActivity = analytics.reduce((acc, event) => {
@@ -167,7 +167,7 @@ export const getProjectProgress = query({
       }
       
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, { tasksCreated: number; tasksCompleted: number; commentsAdded: number; }>);
 
     return { dailyProgress };
   },

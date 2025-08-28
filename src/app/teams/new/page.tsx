@@ -91,7 +91,7 @@ export default function NewTeamPage() {
               <div>
                 <CardTitle className="text-amber-800">Team Limit Reached</CardTitle>
                 <CardDescription className="text-amber-600">
-                  You've reached the maximum number of teams for your current plan.
+                  You&apos;ve reached the maximum number of teams for your current plan.
                 </CardDescription>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function NewTeamPage() {
       {/* Help Text */}
       <div className="mt-8 text-center">
         <p className="text-sm text-gray-500">
-          After creating your team, you'll receive an invite code to share with team members.
+          After creating your team, you&apos;ll receive an invite code to share with team members.
         </p>
       </div>
     </div>

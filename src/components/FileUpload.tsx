@@ -24,7 +24,7 @@ import Link from 'next/link';
 interface FileUploadProps {
   taskId?: string;
   projectId?: string;
-  onUploadComplete?: (file: any) => void;
+  onUploadComplete?: (file: { url: string; key: string; name: string }) => void;
   maxFiles?: number;
   disabled?: boolean;
 }
@@ -127,8 +127,8 @@ export default function FileUpload({
               url: `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileKey}`,
               size: file.size,
               type: file.type,
-              taskId: taskId as any,
-              projectId: projectId as any,
+              taskId: taskId || undefined,
+              projectId: projectId || undefined,
               uploaderId: 'current-user', // This should be the actual user ID
               s3Key: fileKey,
             });

@@ -146,7 +146,7 @@ export default function TeamsPage() {
                 <Crown className="w-5 h-5 text-amber-600" />
                 <div>
                   <p className="font-medium text-amber-800">
-                    You've reached the team limit for Starter plan
+                    You&apos;ve reached the team limit for Starter plan
                   </p>
                   <p className="text-sm text-amber-600">
                     Upgrade to Pro for unlimited teams and advanced features.

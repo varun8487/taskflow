@@ -50,7 +50,7 @@ export default function Home() {
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Streamline Your
-            <span className="text-blue-600"> Team's Workflow</span>
+            <span className="text-blue-600"> Team&apos;s Workflow</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             TaskFlow is a beautiful, modern project management platform that helps teams 
@@ -109,7 +109,7 @@ export default function Home() {
                 <BarChart3 className="w-12 h-12 text-green-600 mb-4" />
                 <CardTitle>Advanced Analytics</CardTitle>
                 <CardDescription>
-                  Get insights into your team's productivity with detailed analytics and reports.
+                  Get insights into your team&apos;s productivity with detailed analytics and reports.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -165,7 +165,7 @@ export default function Home() {
               Simple, transparent pricing
             </h2>
             <p className="text-xl text-gray-600">
-              Choose the plan that's right for your team.
+              Choose the plan that&apos;s right for your team.
             </p>
           </div>
 

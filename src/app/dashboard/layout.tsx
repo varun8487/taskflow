@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,

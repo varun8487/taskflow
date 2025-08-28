@@ -244,7 +244,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Task Assignments</h4>
-                    <p className="text-sm text-gray-600">When you're assigned to a task</p>
+                    <p className="text-sm text-gray-600">When you&apos;re assigned to a task</p>
                   </div>
                   <Badge variant="secondary">Enabled</Badge>
                 </div>
@@ -252,7 +252,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Project Updates</h4>
-                    <p className="text-sm text-gray-600">When projects you're part of are updated</p>
+                    <p className="text-sm text-gray-600">When projects you&apos;re part of are updated</p>
                   </div>
                   <Badge variant="secondary">Enabled</Badge>
                 </div>
@@ -260,7 +260,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Team Invitations</h4>
-                    <p className="text-sm text-gray-600">When you're invited to join a team</p>
+                    <p className="text-sm text-gray-600">When you&apos;re invited to join a team</p>
                   </div>
                   <Badge variant="secondary">Enabled</Badge>
                 </div>
@@ -268,7 +268,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Weekly Digest</h4>
-                    <p className="text-sm text-gray-600">Summary of your week's activity</p>
+                    <p className="text-sm text-gray-600">Summary of your week&apos;s activity</p>
                   </div>
                   <Badge variant="outline">Disabled</Badge>
                 </div>

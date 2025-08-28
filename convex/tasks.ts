@@ -199,7 +199,7 @@ export const updateTaskDetails = mutation({
       throw new Error("User is not authorized to update this task");
     }
 
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       updatedAt: Date.now(),
     };
 
