@@ -7,8 +7,7 @@ const convex = process.env.NEXT_PUBLIC_CONVEX_URL
   ? new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
   : null;
 
-// This should be your webhook endpoint secret from Stripe Dashboard
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+// Webhook secret is read inside the handler so it doesn't warn during build
 
 export async function POST(req: NextRequest) {
   const secret = process.env.STRIPE_SECRET_KEY

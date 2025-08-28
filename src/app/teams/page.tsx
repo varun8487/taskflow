@@ -189,7 +189,7 @@ export default function TeamsPage() {
       {/* Teams Grid */}
       {filteredTeams && filteredTeams.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTeams.map((team: any) => (
+          {filteredTeams.map((team: { _id: string; name: string; description?: string }) => (
             <Card key={team._id} className="glass-effect border-none shadow-xl glow-effect">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
