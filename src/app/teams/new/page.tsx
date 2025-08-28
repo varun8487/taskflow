@@ -15,9 +15,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Users, Crown } from "lucide-react";
 import Link from "next/link";
+import nextDynamic from "next/dynamic";
 // import { useSubscription, isWithinLimit } from "@/lib/subscription";
 
-export default function NewTeamPage() {
+function NewTeamContent() {
   const router = useRouter();
   const { user } = useUser();
   // const { isPro, tier } = useSubscription();
@@ -49,7 +50,7 @@ export default function NewTeamPage() {
 
     setIsLoading(true);
     try {
-      const teamId = await createTeam({
+      await createTeam({
         name: formData.name,
         description: formData.description || undefined,
         ownerId: convexUser._id,
@@ -225,4 +226,14 @@ export default function NewTeamPage() {
       </div>
     </div>
   );
+}
+
+// Dynamic import to prevent SSR issues with Convex
+const DynamicNewTeamContent = nextDynamic(() => Promise.resolve(NewTeamContent), {
+  ssr: false,
+  loading: () => <div className="min-h-screen flex items-center justify-center"><div className="text-lg">Loading...</div></div>
+});
+
+export default function NewTeamPage() {
+  return <DynamicNewTeamContent />;
 }

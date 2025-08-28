@@ -20,9 +20,10 @@ import {
   UserPlus
 } from "lucide-react";
 import Link from "next/link";
+import nextDynamic from "next/dynamic";
 // import { useSubscription, isWithinLimit } from "@/lib/subscription";
 
-export default function TeamsPage() {
+function TeamsContent() {
   const { user } = useUser();
   // const { isPro, tier } = useSubscription();
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,9 +58,9 @@ export default function TeamsPage() {
   if (!user || !convexUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600">      </div>
+    </div>
+  );
   }
 
   return (
@@ -234,4 +235,14 @@ export default function TeamsPage() {
       )}
     </div>
   );
+}
+
+// Dynamic import to prevent SSR issues with Convex
+const DynamicTeamsContent = nextDynamic(() => Promise.resolve(TeamsContent), {
+  ssr: false,
+  loading: () => <div className="min-h-screen flex items-center justify-center"><div className="text-lg">Loading...</div></div>
+});
+
+export default function TeamsPage() {
+  return <DynamicTeamsContent />;
 }

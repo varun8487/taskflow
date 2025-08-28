@@ -4,6 +4,9 @@ import { ClerkProvider } from '@clerk/nextjs'
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
+// Force dynamic rendering to prevent build issues with missing env vars
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "TaskFlow - Modern Project Management",
   description: "A beautiful, modern project management application built with Next.js, Convex, and Clerk",

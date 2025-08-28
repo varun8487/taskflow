@@ -4,7 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
-import React, { Suspense } from "react";
+import React from "react";
 import nextDynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
 // import { useQuery } from "convex/react";
