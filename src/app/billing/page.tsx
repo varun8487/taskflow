@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { useSearchParams, useRouter } from "next/navigation";
 import { 
   CheckCircle, 
   CreditCard, 
@@ -34,6 +35,8 @@ export default function BillingPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [mockSubscriptionTier, setMockSubscriptionTier] = useState("free");
+  const search = useSearchParams();
+  const router = useRouter();
 
   // Temporarily disable Convex queries to fix build issues
   // const convexUser = useQuery(
@@ -92,6 +95,15 @@ export default function BillingPage() {
   //   api.users.getUserSubscriptionStatus,
   //   user ? { clerkId: user.id } : "skip"
   // );
+
+  // Normalize any Stripe return params so UI never appears blank
+  React.useEffect(() => {
+    const hasParams = search.get("success") || search.get("canceled") || search.get("session_id");
+    if (hasParams) {
+      // Clean the URL to /billing without query to ensure UI renders
+      router.replace("/billing");
+    }
+  }, [search, router]);
 
   // Simple Stripe Payment Links (direct)
   const STRIPE_PAYMENT_LINKS: Record<string, string> = {

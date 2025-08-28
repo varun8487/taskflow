@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-// import { useQuery } from "convex/react";
-// import { api } from "@/../convex/_generated/api";
+import { useQuery } from "convex/react";
+import { api } from "@/../convex/_generated/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,20 +34,15 @@ export default function TeamsPage() {
   const isPro = false;
   const tier = "free";
 
-  // Temporarily disable Convex queries to fix build issues
-  // const convexUser = useQuery(
-  //   api.users.getUserByClerkId,
-  //   user ? { clerkId: user.id } : "skip"
-  // );
+  const convexUser = useQuery(
+    api.users.getUserByClerkId,
+    user ? { clerkId: user.id } : "skip"
+  );
 
-  // const teams = useQuery(
-  //   api.teams.getTeamsByUser,
-  //   convexUser ? { userId: convexUser._id } : "skip"
-  // );
-
-  // Mock data for now
-  const convexUser = { _id: "mock-id" };
-  const teams: unknown[] = [];
+  const teams = useQuery(
+    api.teams.getTeamsByUser,
+    convexUser ? { userId: convexUser._id } : "skip"
+  );
 
   const filteredTeams = teams;
 
@@ -194,26 +189,23 @@ export default function TeamsPage() {
       {/* Teams Grid */}
       {filteredTeams && filteredTeams.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Teams will be shown here when Convex is connected */}
-          <Card className="glass-effect border-none shadow-xl glow-effect">
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-6 h-6 text-white" />
+          {filteredTeams.map((team: any) => (
+            <Card key={team._id} className="glass-effect border-none shadow-xl glow-effect">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
+                      {team.name}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                      {team.description || "No description"}
+                    </p>
+                  </div>
+                  <Users className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">
-                  Sample Team
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                  This is how your teams will appear when connected to Convex database
-                </p>
-                <div className="flex items-center justify-center text-xs text-blue-600 dark:text-blue-400">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
-                  Real-time sync enabled
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : (
         <div className="text-center py-12">

@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-// import { useQuery, useMutation } from "convex/react";
-// import { api } from "@/../convex/_generated/api";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/../convex/_generated/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,22 +27,18 @@ export default function NewTeamPage() {
     description: "",
   });
 
-  // Temporarily disable Convex queries to fix build issues
-  // const convexUser = useQuery(
-  //   api.users.getUserByClerkId,
-  //   user ? { clerkId: user.id } : "skip"
-  // );
+  const convexUser = useQuery(
+    api.users.getUserByClerkId,
+    user ? { clerkId: user.id } : "skip"
+  );
 
-  // const teams = useQuery(
-  //   api.teams.getTeamsByUser,
-  //   convexUser ? { userId: convexUser._id } : "skip"
-  // );
+  const teams = useQuery(
+    api.teams.getTeamsByUser,
+    convexUser ? { userId: convexUser._id } : "skip"
+  );
 
-  // const createTeam = useMutation(api.teams.createTeam);
+  const createTeam = useMutation(api.teams.createTeam);
 
-  // Mock data for now
-  const convexUser = { _id: "mock-id" };
-  const teams = [];
   const isPro = false;
   // const tier = "starter"; // Removed unused variable
   const canCreateTeam = true;
@@ -53,14 +49,11 @@ export default function NewTeamPage() {
 
     setIsLoading(true);
     try {
-      // Temporarily disabled for build - would create team via Convex
-      // const teamId = await createTeam({
-      //   name: formData.name,
-      //   description: formData.description || undefined,
-      //   ownerId: convexUser._id,
-      // });
-
-      console.log("Team creation temporarily disabled");
+      const teamId = await createTeam({
+        name: formData.name,
+        description: formData.description || undefined,
+        ownerId: convexUser._id,
+      });
       router.push("/teams");
     } catch (error) {
       console.error("Error creating team:", error);
