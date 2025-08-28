@@ -3,7 +3,9 @@ import Stripe from 'stripe';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/../convex/_generated/api';
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convex = process.env.NEXT_PUBLIC_CONVEX_URL
+  ? new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
+  : null;
 
 // This should be your webhook endpoint secret from Stripe Dashboard
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
           );
           
           // Update user subscription in Convex
-          await convex.mutation(api.users.updateUserSubscription, {
+          if (convex) await convex.mutation(api.users.updateUserSubscription, {
             clerkId: session.metadata?.clerkUserId || '',
             subscriptionTier: 'pro',
             subscriptionStatus: 'active',
@@ -81,7 +83,7 @@ export async function POST(req: NextRequest) {
               status = 'inactive';
           }
 
-          await convex.mutation(api.users.updateUserSubscription, {
+          if (convex) await convex.mutation(api.users.updateUserSubscription, {
             clerkId: customer.metadata.clerkUserId,
             subscriptionTier: status === 'active' ? 'pro' : 'starter',
             subscriptionStatus: status,
@@ -100,7 +102,7 @@ export async function POST(req: NextRequest) {
         ) as Stripe.Customer;
 
         if (customer.metadata?.clerkUserId) {
-          await convex.mutation(api.users.updateUserSubscription, {
+          if (convex) await convex.mutation(api.users.updateUserSubscription, {
             clerkId: customer.metadata.clerkUserId,
             subscriptionTier: 'starter',
             subscriptionStatus: 'canceled',
@@ -123,7 +125,7 @@ export async function POST(req: NextRequest) {
           ) as Stripe.Customer;
 
           if (customer.metadata?.clerkUserId) {
-            await convex.mutation(api.users.updateUserSubscription, {
+            if (convex) await convex.mutation(api.users.updateUserSubscription, {
               clerkId: customer.metadata.clerkUserId,
               subscriptionTier: 'starter', // Downgrade on payment failure
               subscriptionStatus: 'past_due',

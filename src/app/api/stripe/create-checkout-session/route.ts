@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
     const stripe = new Stripe(secret, { apiVersion: '2025-08-27.basil' })
     const { userId, userEmail, tier = 'pro' } = await req.json();
 
-    if (!userId || !userEmail) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Missing required parameters' },
+        { error: 'Missing userId' },
         { status: 400 }
       );
     }
@@ -57,25 +57,21 @@ export async function POST(req: NextRequest) {
 
     // Create or retrieve customer
     let customer;
-    const existingCustomers = await stripe.customers.list({
-      email: userEmail,
-      limit: 1,
-    });
-
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0];
-      // Update customer metadata
-      customer = await stripe.customers.update(customer.id, {
-        metadata: {
-          clerkUserId: userId,
-        },
-      });
-    } else {
-      customer = await stripe.customers.create({
+    if (userEmail) {
+      const existingCustomers = await stripe.customers.list({
         email: userEmail,
-        metadata: {
-          clerkUserId: userId,
-        },
+        limit: 1,
+      });
+      if (existingCustomers.data.length > 0) {
+        customer = await stripe.customers.update(existingCustomers.data[0].id, {
+          metadata: { clerkUserId: userId },
+        });
+      }
+    }
+    if (!customer) {
+      customer = await stripe.customers.create({
+        email: userEmail || undefined,
+        metadata: { clerkUserId: userId },
       });
     }
 
