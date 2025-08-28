@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
+import React from "react";
 import { useUser } from "@clerk/nextjs";
 // import { useQuery } from "convex/react";
 // import { api } from "@/../convex/_generated/api";
@@ -18,7 +19,10 @@ import {
   Zap,
   Shield,
   Sparkles,
-  Star
+  Star,
+  CheckCircle2,
+  X,
+  AlertCircle
 } from "lucide-react";
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -27,6 +31,9 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 export default function BillingPage() {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
+  const [mockSubscriptionTier, setMockSubscriptionTier] = useState("free");
 
   // Temporarily disable Convex queries to fix build issues
   // const convexUser = useQuery(
@@ -34,11 +41,33 @@ export default function BillingPage() {
   //   user ? { clerkId: user.id } : "skip"
   // );
 
-  // Mock convex user for now - Default to free plan
+  // Check URL parameters for success/cancel
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const canceled = urlParams.get('canceled');
+    const tier = urlParams.get('tier');
+    
+    if (success === 'true' && tier) {
+      setShowSuccess(true);
+      setMockSubscriptionTier(tier); // Simulate successful subscription
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    if (canceled === 'true') {
+      setShowCancel(true);
+      setTimeout(() => setShowCancel(false), 5000);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // Mock convex user for now - Use mockSubscriptionTier to simulate updates
   const convexUser = { 
-    subscriptionTier: "free", 
-    stripeCustomerId: null,
-    stripeSubscriptionId: null 
+    subscriptionTier: mockSubscriptionTier, 
+    stripeCustomerId: mockSubscriptionTier !== "free" ? "cus_mock123" : null,
+    stripeSubscriptionId: mockSubscriptionTier !== "free" ? "sub_mock123" : null 
   };
 
   // const subscriptionStatus = useQuery(
@@ -68,6 +97,12 @@ export default function BillingPage() {
         if (user.emailAddresses[0]?.emailAddress) {
           url.searchParams.append('prefilled_email', user.emailAddresses[0].emailAddress);
         }
+        
+        // Add success and cancel URLs for proper redirects
+        const baseUrl = window.location.origin;
+        url.searchParams.append('success_url', `${baseUrl}/billing?success=true&tier=${tier}`);
+        url.searchParams.append('cancel_url', `${baseUrl}/billing?canceled=true`);
+        
         window.location.href = url.toString();
         return;
       }
@@ -90,11 +125,11 @@ export default function BillingPage() {
       if (url) {
         window.location.href = url;
       } else if (sessionId) {
-        const stripe = await stripePromise;
-        if (stripe) {
-          const { error } = await stripe.redirectToCheckout({ sessionId });
-          if (error) {
-            console.error('Stripe error:', error);
+      const stripe = await stripePromise;
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        if (error) {
+          console.error('Stripe error:', error);
             alert('Payment failed. Please try again.');
           }
         }
@@ -187,6 +222,73 @@ export default function BillingPage() {
         initial="hidden"
         animate="visible"
       >
+        {/* Success/Cancel Messages */}
+        {showSuccess && (
+          <motion.div 
+            className="max-w-2xl mx-auto mb-8"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <Card className="border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">
+              <CardContent className="pt-6">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
+                  <div>
+                    <h3 className="font-bold text-green-800 dark:text-green-200 text-lg">
+                      Payment Successful! 🎉
+                    </h3>
+                    <p className="text-green-700 dark:text-green-300">
+                      Your subscription to {mockSubscriptionTier.charAt(0).toUpperCase() + mockSubscriptionTier.slice(1)} plan has been activated.
+                    </p>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowSuccess(false)}
+                    className="ml-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {showCancel && (
+          <motion.div 
+            className="max-w-2xl mx-auto mb-8"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+          >
+            <Card className="border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-800">
+              <CardContent className="pt-6">
+                <div className="flex items-center space-x-3">
+                  <AlertCircle className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+                  <div>
+                    <h3 className="font-bold text-orange-800 dark:text-orange-200 text-lg">
+                      Payment Canceled
+                    </h3>
+                    <p className="text-orange-700 dark:text-orange-300">
+                      Your payment was canceled. You can try again anytime.
+                    </p>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowCancel(false)}
+                    className="ml-auto"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Header */}
         <motion.div className="text-center mb-12" variants={itemVariants}>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4">
@@ -224,7 +326,7 @@ export default function BillingPage() {
                     </CardTitle>
                     <CardDescription className="text-lg text-gray-600 dark:text-gray-300 mt-1">
                       {convexUser?.subscriptionTier === "pro" 
-                        ? "You have access to all premium features and priority support"
+                        ? "You have access to all premium features and priority support" 
                         : convexUser?.subscriptionTier === "enterprise"
                         ? "You have access to all enterprise features and dedicated support"
                         : convexUser?.subscriptionTier === "starter"
@@ -596,6 +698,47 @@ export default function BillingPage() {
           </Card>
         </motion.div>
       </motion.div>
+
+      {/* Testing Panel (Development Only) */}
+      {process.env.NODE_ENV === 'development' && (
+        <motion.div 
+          className="fixed bottom-4 left-4 z-50 max-w-xs"
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <Card className="glass-effect border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-sm flex items-center text-blue-800 dark:text-blue-200">
+                🧪 Testing Panel
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-xs text-blue-700 dark:text-blue-300">
+                <strong>Current Tier:</strong> {mockSubscriptionTier}
+              </div>
+              <div className="space-y-2">
+                {["free", "starter", "pro", "enterprise"].map((tier) => (
+                  <Button
+                    key={tier}
+                    variant={mockSubscriptionTier === tier ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setMockSubscriptionTier(tier)}
+                    className="w-full text-xs justify-start"
+                  >
+                    {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                  </Button>
+                ))}
+              </div>
+              <div className="text-xs text-blue-600 dark:text-blue-400 mt-2 p-2 bg-blue-100 dark:bg-blue-800 rounded">
+                <strong>Test Cards:</strong><br/>
+                Success: 4242 4242 4242 4242<br/>
+                Decline: 4000 0000 0000 0002
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
     </div>
   );
 }
