@@ -53,21 +53,10 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 19c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Database Connection Setup Required</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
           <p className="text-gray-600 mb-4">
-            The application is working, but the database integration needs to be configured. 
-            This requires creating a JWT template in Clerk.
+            We encountered an unexpected error. Please try again. If the issue persists, contact support.
           </p>
-          <div className="space-y-3 text-sm text-left bg-gray-50 p-4 rounded-md mb-4">
-            <p><strong>Quick Fix:</strong></p>
-            <ol className="list-decimal list-inside space-y-1">
-              <li>Go to <a href="https://dashboard.clerk.dev" className="text-blue-600 hover:underline">Clerk Dashboard</a></li>
-              <li>Find your TaskFlow application</li>
-              <li>Navigate to &quot;JWT Templates&quot;</li>
-              <li>Create new template named &quot;convex&quot;</li>
-              <li>Restart the application</li>
-            </ol>
-          </div>
           <div className="flex space-x-3">
             <Button onClick={resetError} variant="outline" className="flex-1">
               Try Again
