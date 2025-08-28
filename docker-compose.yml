@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  # TaskFlow Next.js Application
+  taskflow-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Convex (you'll need to set these from your actual Convex deployment)
+      - CONVEX_DEPLOYMENT=${CONVEX_DEPLOYMENT}
+      - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL}
+      
+      # Clerk (you'll need to set these from your Clerk app)
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+      
+      # Stripe (test keys)
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      
+      # Local S3 (MinIO)
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
+      - AWS_S3_BUCKET_NAME=taskflow-files
+      - AWS_ENDPOINT_URL=http://minio:9000
+      - NEXT_PUBLIC_AWS_S3_BUCKET_NAME=taskflow-files
+      - NEXT_PUBLIC_AWS_REGION=us-east-1
+      
+      # Development settings
+      - NODE_ENV=development
+    depends_on:
+      - minio
+      - stripe-cli
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - taskflow-network
+
+  # MinIO for local S3 testing
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - taskflow-network
+
+  # MinIO Client to create bucket
+  minio-setup:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/taskflow-files --ignore-existing;
+      /usr/bin/mc policy set public myminio/taskflow-files;
+      echo 'MinIO setup complete';
+      "
+    networks:
+      - taskflow-network
+
+  # Stripe CLI for webhook testing
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    command: >
+      sh -c "
+      if [ -n '${STRIPE_SECRET_KEY}' ]; then
+        stripe listen --forward-to taskflow-app:3000/api/stripe/webhook --skip-verify
+      else
+        echo 'STRIPE_SECRET_KEY not set, skipping webhook forwarding'
+        sleep infinity
+      fi
+      "
+    environment:
+      - STRIPE_API_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      - taskflow-app
+    networks:
+      - taskflow-network
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - taskflow-network
+
+  # MailHog for email testing (optional)
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - taskflow-network
+
+volumes:
+  minio_data:
+  redis_data:
+
+networks:
+  taskflow-network:
+    driver: bridge
