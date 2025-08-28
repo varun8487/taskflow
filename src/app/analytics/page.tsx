@@ -12,7 +12,6 @@ import {
   TrendingUp, 
   Users, 
   CheckCircle2, 
-  Clock,
   Target,
   Crown,
   Lock
@@ -52,7 +51,7 @@ export default function AnalyticsPage() {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Advanced Analytics</h1>
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Get detailed insights into your team's productivity, project progress, and performance metrics with Pro analytics.
+            Get detailed insights into your team&apos;s productivity, project progress, and performance metrics with Pro analytics.
           </p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -117,7 +116,7 @@ export default function AnalyticsPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
           <p className="text-gray-600">
-            Comprehensive insights into your team's productivity and performance.
+            Comprehensive insights into your team&apos;s productivity and performance.
           </p>
         </div>
         <Badge className="bg-gradient-to-r from-blue-500 to-purple-600">
