@@ -41,33 +41,42 @@ export default function BillingPage() {
   //   user ? { clerkId: user.id } : "skip"
   // );
 
-  // Check URL parameters for success/cancel
+  // Check URL parameters for success/cancel and confirm session on server
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const success = urlParams.get('success');
     const canceled = urlParams.get('canceled');
     const tier = urlParams.get('tier');
     const sessionId = urlParams.get('session_id');
-    
-    console.log('URL Parameters:', { success, canceled, tier, sessionId }); // Debug log
-    
-    if (success === 'true' && tier) {
-      console.log('Processing successful payment for tier:', tier); // Debug log
-      setShowSuccess(true);
-      setMockSubscriptionTier(tier); // Simulate successful subscription
-      
-      // Clean URL after a brief delay to ensure the user sees the success message
-      setTimeout(() => {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }, 100);
+
+    // Helper to clean query string without page reload
+    const cleanUrl = () => window.history.replaceState({}, document.title, window.location.pathname);
+
+    if (success === 'true' && sessionId) {
+      // Confirm with our API (also persists to Convex when configured)
+      fetch(`/api/stripe/confirm-session?session_id=${sessionId}`)
+        .then(res => res.json())
+        .then(res => {
+          if (res?.tier) {
+            setMockSubscriptionTier(res.tier);
+          }
+          setShowSuccess(true);
+          setTimeout(cleanUrl, 100);
+        })
+        .catch(() => {
+          // Fallback UI-only if API fails
+          if (tier) setMockSubscriptionTier(tier);
+          setShowSuccess(true);
+          setTimeout(cleanUrl, 100);
+        });
+      return;
     }
-    
+
     if (canceled === 'true') {
-      console.log('Processing canceled payment'); // Debug log
       setShowCancel(true);
       setTimeout(() => {
         setShowCancel(false);
-        window.history.replaceState({}, document.title, window.location.pathname);
+        cleanUrl();
       }, 5000);
     }
   }, []);
