@@ -1,484 +1,362 @@
-# 🚀 TaskFlow - Enterprise SaaS Platform
+# TaskFlow - Modern Project Management Platform
 
-**A complete team collaboration and project management platform built with modern enterprise technologies.**
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/varun8487/taskflow)
 
-## 🌟 **Live Demo & Repository**
+A beautiful, modern project management application built with Morta's core stack: **Next.js 15**, **React**, **Tailwind CSS + shadcn/ui**, **Convex**, **Clerk**, and **Stripe**.
 
-- **🌍 Live Application:** *[Will be deployed to Vercel]*
-- **📱 GitHub Repository:** *[Ready for submission]*
-- **🎥 Demo Walkthrough:** *[Screenshots included below]*
+## 🚀 Live Demo
 
----
+- **Live Application**: [https://taskflow-demo.vercel.app](https://taskflow-demo.vercel.app) *(to be deployed)*
+- **GitHub Repository**: [https://github.com/varun8487/taskflow](https://github.com/varun8487/taskflow)
 
-## 📋 **Overview**
+## ✨ Features
 
-TaskFlow is a full-stack SaaS application demonstrating **Tech Lead level architecture** and implementation. Built with enterprise-grade technologies, it showcases modern development practices, security, scalability, and team collaboration patterns.
+### 🎨 **Modern UI/UX**
+- **Dark/Light Mode**: Seamless theme switching with system preference detection
+- **Glass Morphism**: Modern glass effects and backdrop blur
+- **Smooth Animations**: Framer Motion powered interactions
+- **Responsive Design**: Mobile-first approach with beautiful responsive layouts
+- **Gradient Aesthetics**: Professional color schemes with gradient backgrounds
 
-### **🎯 Key Achievements**
+### 🔐 **Authentication & Authorization**
+- **Clerk Integration**: Secure authentication with social logins (Google, GitHub)
+- **Role-Based Access Control (RBAC)**: Team owner, admin, and member roles
+- **Protected Routes**: Middleware-based route protection
+- **Session Management**: Persistent authentication state
 
-- **💰 Market Value:** $15,000+ production-ready SaaS
-- **⚡ Real-time Collaboration:** Live team synchronization
-- **🔒 Enterprise Security:** JWT + RBAC authentication
-- **💳 Subscription Billing:** Complete Stripe integration
-- **🧪 Quality Assurance:** Comprehensive testing suite
-- **🐳 DevOps Ready:** Docker + CI/CD pipeline
-- **📱 Professional UI/UX:** Modern design system
+### 💳 **Subscription & Billing**
+- **Stripe Integration**: Complete payment processing lifecycle
+- **Tiered Subscriptions**: Free, Starter, Pro, and Enterprise plans
+- **Feature Gating**: Dynamic feature access based on subscription tier
+- **Usage Limits**: Real-time tracking of plan limits and usage warnings
+- **Billing Portal**: Self-service subscription management
 
----
+### 🏗️ **Project Management**
+- **Team Collaboration**: Create and manage teams with role-based permissions
+- **Project Organization**: Unlimited projects for Pro+ users
+- **Task Management**: Create, assign, and track tasks with status updates
+- **File Uploads**: AWS S3 integration for document management *(optional)*
+- **Analytics Dashboard**: Performance metrics and team insights *(Pro feature)*
 
-## 🏗️ **Architecture & Tech Stack**
+### 📊 **Advanced Analytics** *(Pro Feature)*
+- **Performance Metrics**: Task completion rates and team velocity
+- **Visual Dashboards**: Charts and progress tracking
+- **Team Insights**: Individual member performance analytics
+- **Trend Analysis**: Weekly and monthly performance trends
 
-### **Frontend Architecture**
+## 🛠️ Tech Stack
+
+### **Frontend**
+- **Next.js 15** (App Router, TypeScript) - React framework with server-side rendering
+- **React 18** - Component-based UI library
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - Beautiful, accessible UI components
+- **Framer Motion** - Smooth animations and transitions
+- **next-themes** - Dark/light mode support
+
+### **Backend & Database**
+- **Convex** - Real-time backend with type-safe APIs
+- **TypeScript** - End-to-end type safety
+
+### **Authentication**
+- **Clerk** - Complete authentication solution with RBAC
+
+### **Payments**
+- **Stripe** - Payment processing and subscription management
+
+### **File Storage** *(Optional)*
+- **AWS S3** - Scalable file storage and management
+
+### **Development & Deployment**
+- **ESLint & Prettier** - Code linting and formatting
+- **GitHub Actions** - CI/CD pipeline
+- **Vercel** - Production deployment platform
+
+## 🏗️ Architecture Decisions
+
+### **1. Frontend Architecture**
 ```
-Next.js 15 (App Router) + TypeScript
-├── Real-time UI updates (Convex)
-├── Enterprise authentication (Clerk)
-├── Modern design system (Tailwind + shadcn/ui)
-├── Error boundaries & monitoring
-└── Responsive mobile-first design
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/            # Authentication routes
+│   ├── dashboard/         # Protected dashboard pages
+│   └── api/              # API routes (Stripe webhooks)
+├── components/           # Reusable React components
+│   ├── ui/              # shadcn/ui components
+│   └── providers/       # Context providers
+├── lib/                 # Utility functions and configurations
+└── convex/             # Backend functions and schema
 ```
 
-### **Backend Architecture**
-```
-Convex Real-time Database
-├── User management & RBAC
-├── Team collaboration
-├── Project & task management
-├── File storage integration
-└── Analytics & reporting
-```
+### **2. State Management**
+- **Convex Real-time Queries**: Server state management with real-time updates
+- **React Context**: Client state for theme and UI preferences
+- **URL State**: Route-based state management for navigation
 
-### **Technology Stack**
+### **3. Authentication Strategy**
+- **Clerk Provider**: Wraps the entire application for authentication context
+- **Middleware Protection**: Route-level protection using Next.js middleware
+- **JWT Integration**: Secure communication between Clerk and Convex
 
-| **Category** | **Technology** | **Purpose** |
-|--------------|----------------|-------------|
-| **Frontend** | Next.js 15 + TypeScript | React framework with App Router |
-| **UI/UX** | Tailwind CSS + shadcn/ui | Modern component design system |
-| **Database** | Convex | Real-time backend with live sync |
-| **Authentication** | Clerk | Enterprise auth with JWT + RBAC |
-| **Payments** | Stripe | Subscription billing & management |
-| **Storage** | AWS S3 (MinIO local) | File upload & storage |
-| **Testing** | Jest + React Testing Library | Unit & integration testing |
-| **DevOps** | Docker + GitHub Actions | Containerization & CI/CD |
-| **Deployment** | Vercel | Production hosting |
+### **4. Data Layer**
+- **Convex Functions**: Type-safe backend functions for all data operations
+- **Real-time Subscriptions**: Live updates across all connected clients
+- **Optimistic Updates**: Immediate UI feedback with server reconciliation
 
----
+### **5. Styling Architecture**
+- **Design System**: Consistent color palette and spacing using CSS variables
+- **Component Variants**: shadcn/ui component variations for different use cases
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
+- **Theme Support**: Dynamic CSS variables for dark/light mode switching
 
-## 🚀 **Quick Start**
+## 🚦 Getting Started
 
 ### **Prerequisites**
-- Node.js 18+
-- Docker & Docker Compose
+- Node.js 18+ 
+- npm or yarn
 - Git
 
-### **1. Clone & Setup**
+### **1. Clone the Repository**
 ```bash
-git clone [repository-url]
+git clone https://github.com/varun8487/taskflow.git
 cd taskflow
+```
+
+### **2. Install Dependencies**
+```bash
 npm install
 ```
 
-### **2. Environment Configuration**
-```bash
-# Copy environment template
-cp .env.local.template .env.local
+### **3. Environment Setup**
+Create a `.env.local` file with the following variables:
 
-# Configure your API keys:
-NEXT_PUBLIC_CONVEX_URL=your_convex_url
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
-CLERK_SECRET_KEY=your_clerk_secret
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key
-STRIPE_SECRET_KEY=your_stripe_secret
+```env
+# Convex (Backend)
+NEXT_PUBLIC_CONVEX_URL=your_convex_deployment_url
+
+# Clerk (Authentication)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
+
+# Stripe (Payments)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+
+# AWS S3 (Optional - File Uploads)
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+AWS_S3_BUCKET_NAME=taskflow-uploads
 ```
 
-### **3. Database Setup**
+### **4. Set Up Services**
+
+#### **Convex Setup**
 ```bash
-# 1. Create Convex project at https://dashboard.convex.dev
-# 2. Deploy schema: npx convex deploy
-# 3. Configure Clerk JWT template named "convex"
+npx convex dev --once --configure=new
+# Follow prompts to create/connect your Convex project
+npx convex deploy
 ```
 
-### **4. Run Development**
-```bash
-# Option A: Docker (Recommended)
-docker-compose -f docker-compose.dev.yml up
+#### **Clerk Setup**
+1. Create a [Clerk application](https://dashboard.clerk.dev/)
+2. Configure social login providers (Google, GitHub)
+3. Add your domain to allowed origins
+4. Copy API keys to `.env.local`
 
-# Option B: Local development
+#### **Stripe Setup**
+1. Create a [Stripe account](https://dashboard.stripe.com/)
+2. Copy API keys to `.env.local`
+3. Set up webhook endpoint: `https://your-domain.com/api/stripe/webhook`
+4. Configure webhook events: `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.payment_succeeded`
+
+### **5. Run Development Server**
+```bash
 npm run dev
 ```
 
-### **5. Access Application**
-- **Frontend:** http://localhost:3000
-- **Health Check:** http://localhost:3000/api/health
+Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
----
-
-## 🎯 **Key Features & Implementation**
-
-### **🔐 Authentication & Authorization**
-- **Enterprise SSO:** Google, email/password via Clerk
-- **RBAC System:** Role-based access control
-- **JWT Integration:** Secure Convex database access
-- **Session Management:** Persistent authentication
-
-### **💳 Subscription Billing**
-- **Stripe Integration:** Complete payment lifecycle
-- **Tier Management:** Starter vs Pro plans
-- **Feature Gating:** Subscription-based access control
-- **Customer Portal:** Self-service billing management
-
-### **👥 Team Collaboration**
-- **Real-time Sync:** Live updates across all users
-- **Team Management:** Invite, roles, permissions
-- **Project Organization:** Hierarchical task structure
-- **Activity Tracking:** Audit logs and notifications
-
-### **📊 Analytics & Reporting**
-- **Usage Metrics:** User engagement tracking
-- **Performance Insights:** Team productivity analytics
-- **Subscription Analytics:** Revenue and churn metrics
-- **Custom Dashboards:** Role-based data views
-
-### **📁 File Management**
-- **AWS S3 Integration:** Scalable file storage
-- **Presigned URLs:** Secure direct uploads
-- **File Organization:** Project-based file structure
-- **Access Control:** Permission-based file sharing
-
----
-
-## 🏛️ **Architecture Decisions**
-
-### **1. Next.js App Router Choice**
-**Decision:** Use Next.js 15 App Router over Pages Router
-**Rationale:** 
-- Better performance with streaming SSR
-- Improved developer experience
-- Future-proof architecture
-- Built-in loading and error boundaries
-
-### **2. Convex Real-time Database**
-**Decision:** Convex over traditional REST + WebSocket
-**Rationale:**
-- Automatic real-time synchronization
-- Type-safe queries and mutations
-- Built-in authentication integration
-- Simplified backend development
-
-### **3. Clerk Authentication**
-**Decision:** Clerk over NextAuth or custom auth
-**Rationale:**
-- Enterprise-grade security features
-- Built-in RBAC and user management
-- Seamless social login integration
-- Compliance-ready (SOC 2, GDPR)
-
-### **4. Stripe Subscription Model**
-**Decision:** Subscription-based SaaS model
-**Rationale:**
-- Predictable recurring revenue
-- Feature gating drives upgrades
-- Customer lifetime value optimization
-- Industry standard for B2B SaaS
-
-### **5. Docker Containerization**
-**Decision:** Docker for development and production
-**Rationale:**
-- Consistent development environments
-- Simplified deployment process
-- Microservices-ready architecture
-- DevOps best practices
-
----
-
-## 🧪 **Testing Strategy**
-
-### **Testing Pyramid**
-```
-E2E Tests (Planned)
-├── User authentication flows
-├── Subscription upgrade journeys
-└── Team collaboration scenarios
-
-Integration Tests
-├── API endpoint testing
-├── Database query validation
-└── External service integration
-
-Unit Tests ✅
-├── Component rendering
-├── Utility function logic
-└── Business logic validation
-```
-
-### **Current Test Coverage**
-- **Unit Tests:** Component rendering, utility functions
-- **Integration Tests:** API endpoints, subscription logic
-- **Manual Testing:** Full user journey validation
-
-### **Running Tests**
+### **6. Docker Setup** *(Optional)*
 ```bash
-# Unit tests
-npm test
+# Development environment
+npm run docker:dev
 
-# Integration tests
-npm run test:integration
-
-# Test coverage
-npm run test:coverage
-
-# Docker test environment
-./test-features.sh
+# Production environment  
+npm run docker:prod
 ```
 
----
+## 🎯 Feature Gating Implementation
 
-## 🚀 **CI/CD Pipeline**
+### **Subscription Tiers**
+| Feature | Free | Starter ($12/mo) | Pro ($29/mo) | Enterprise ($99/mo) |
+|---------|------|------------------|--------------|-------------------|
+| Teams | 1 | 3 | 10 | Unlimited |
+| Projects | 3 | 10 | 50 | Unlimited |
+| Tasks per Project | 10 | 50 | 200 | Unlimited |
+| File Upload Size | 5MB | 25MB | 100MB | 500MB |
+| Storage | 1GB | 10GB | 100GB | 1TB |
+| Analytics | ❌ | ✅ | ✅ | ✅ |
+| Priority Support | ❌ | ❌ | ✅ | ✅ |
+| API Access | ❌ | ❌ | ✅ | ✅ |
 
-### **GitHub Actions Workflow**
-```yaml
-name: CI/CD Pipeline
-on: [push, pull_request]
+### **Implementation Pattern**
+```typescript
+// Feature gate component usage
+<FeatureGate feature="analyticsAccess" requiredTier="starter">
+  <AnalyticsDashboard />
+</FeatureGate>
 
-jobs:
-  test:
-    - Lint code quality
-    - Run unit tests
-    - Run integration tests
-    - Security scanning
-  
-  build:
-    - Build production bundle
-    - Optimize assets
-    - Generate Docker image
-  
-  deploy:
-    - Deploy to Vercel
-    - Run smoke tests
-    - Notify team
+// Usage limit checking
+<UsageLimit feature="maxTeams" currentUsage={teamCount}>
+  <CreateTeamButton />
+</UsageLimit>
 ```
 
-### **Deployment Strategy**
-- **Preview Deployments:** Every PR gets preview URL
-- **Production Deployment:** Automatic on main branch
-- **Rollback Strategy:** Instant rollback via Vercel
-- **Health Monitoring:** Automated health checks
-
----
-
-## 📈 **Scalability & Team Organization**
-
-### **For Small Team (2-5 developers)**
-```
-Repository Structure:
-├── Frontend Developer: /src/app, /src/components
-├── Backend Developer: /convex, /src/app/api
-├── DevOps Engineer: Docker, CI/CD, deployment
-└── Product Manager: Feature specs, testing
-```
-
-### **For Growing Team (5-15 developers)**
-```
-Microservices Architecture:
-├── Frontend Team: Next.js application
-├── Backend Team: Convex functions + API routes
-├── Platform Team: Auth, billing, infrastructure
-├── QA Team: Testing automation
-└── DevOps Team: Deployment, monitoring
-```
-
-### **Scaling Considerations**
-- **Database:** Convex scales automatically
-- **Authentication:** Clerk handles millions of users
-- **File Storage:** AWS S3 infinite scalability
-- **Frontend:** Vercel Edge Network global CDN
-- **Monitoring:** Built-in observability
-
----
-
-## 🔒 **Security Implementation**
+## 🔒 Security & Compliance
 
 ### **Authentication Security**
-- **JWT Tokens:** Secure API access
-- **RBAC:** Role-based permissions
-- **Session Management:** Secure cookie handling
-- **Social Login:** OAuth 2.0 compliance
+- **JWT Tokens**: Secure token-based authentication
+- **Session Management**: Automatic token refresh and secure logout
+- **CSRF Protection**: Built-in Cross-Site Request Forgery protection
 
-### **Data Protection**
-- **Encryption:** Data encrypted at rest and in transit
-- **Input Validation:** All user inputs sanitized
-- **CORS Protection:** Strict cross-origin policies
-- **Rate Limiting:** API abuse prevention
+### **Data Security**
+- **Input Validation**: Server-side validation for all user inputs
+- **SQL Injection Prevention**: Convex's built-in query protection
+- **XSS Protection**: React's built-in XSS prevention
 
-### **Infrastructure Security**
-- **Environment Variables:** Secure secret management
-- **Docker Security:** Non-root containers
-- **HTTPS Only:** SSL/TLS enforcement
-- **Security Headers:** OWASP compliance
+### **Payment Security**
+- **PCI Compliance**: Stripe handles all payment data securely
+- **Webhook Verification**: Cryptographic verification of Stripe webhooks
+- **Environment Variables**: Sensitive data stored securely
 
----
+## 📈 Performance Optimizations
 
-## 🎨 **UI/UX Design**
+### **Frontend Performance**
+- **Code Splitting**: Automatic route-based code splitting
+- **Image Optimization**: Next.js built-in image optimization
+- **Bundle Analysis**: Webpack bundle analyzer for optimization
+- **Caching**: Aggressive caching of static assets
 
-### **Design System**
-- **Component Library:** shadcn/ui with Tailwind CSS
-- **Typography:** Inter font for readability
-- **Color Palette:** Professional blue/gray theme
-- **Responsive Design:** Mobile-first approach
-- **Accessibility:** WCAG 2.1 AA compliance
+### **Backend Performance**
+- **Real-time Updates**: Convex's efficient real-time subscriptions
+- **Query Optimization**: Indexed database queries for fast lookups
+- **CDN Delivery**: Static assets served via Vercel's global CDN
 
-### **User Experience**
-- **Intuitive Navigation:** Clear information hierarchy
-- **Loading States:** Skeleton screens and spinners
-- **Error Handling:** User-friendly error messages
-- **Performance:** Sub-second page loads
-- **Progressive Enhancement:** Works without JavaScript
+## 🧪 Testing Strategy
 
----
+### **Testing Approach** *(To be implemented)*
+- **Unit Tests**: Component and utility function testing
+- **Integration Tests**: API endpoint and user flow testing
+- **E2E Tests**: Complete user journey testing with Playwright
+- **Performance Tests**: Load testing and performance monitoring
 
-## 🔧 **Development Workflow**
+### **Quality Assurance**
+- **TypeScript**: Compile-time type checking
+- **ESLint**: Code quality and consistency enforcement
+- **Prettier**: Automated code formatting
+- **GitHub Actions**: Automated testing and deployment
 
-### **Code Quality**
+## 🚀 Deployment
+
+### **Vercel Deployment** *(Recommended)*
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard
+3. Deploy automatically on every push to main branch
+
+### **Manual Deployment**
 ```bash
-# Linting
-npm run lint
-
-# Type checking
-npm run type-check
-
-# Code formatting
-npm run format
-
-# Pre-commit hooks
-npm run pre-commit
+npm run build
+npm run start
 ```
 
-### **Development Process**
-1. **Feature Branches:** All development in feature branches
-2. **Pull Requests:** Code review required for main branch
-3. **Automated Testing:** CI runs on every commit
-4. **Documentation:** API docs auto-generated
-5. **Version Control:** Semantic versioning
-
----
-
-## 📊 **Performance Metrics**
-
-### **Core Web Vitals**
-- **LCP:** < 2.5s (Largest Contentful Paint)
-- **FID:** < 100ms (First Input Delay)
-- **CLS:** < 0.1 (Cumulative Layout Shift)
-
-### **Application Performance**
-- **Page Load:** < 1s average load time
-- **API Response:** < 200ms average response
-- **Real-time Updates:** < 50ms propagation
-- **Database Queries:** Optimized with indexing
-
----
-
-## 🚀 **Production Deployment**
-
-### **Vercel Deployment**
+### **Docker Deployment**
 ```bash
-# Connect GitHub repository to Vercel
-# Environment variables configured in Vercel dashboard
-# Automatic deployments on main branch push
+docker build -t taskflow .
+docker run -p 3000:3000 taskflow
 ```
 
-### **Environment Configuration**
-- **Production Database:** Convex production deployment
-- **Authentication:** Clerk production instance
-- **Payments:** Stripe live keys
-- **Storage:** AWS S3 production bucket
-- **Monitoring:** Vercel Analytics + custom metrics
+## 🔄 CI/CD Pipeline
 
----
+### **GitHub Actions Workflow**
+- **Linting**: ESLint and TypeScript checking
+- **Building**: Production build verification
+- **Testing**: Automated test execution *(when implemented)*
+- **Deployment**: Automatic deployment to Vercel
 
-## 📋 **Feature Roadmap**
+### **Deployment Strategy**
+- **Preview Deployments**: Every pull request gets a preview deployment
+- **Production Deployment**: Main branch automatically deploys to production
+- **Rollback**: Easy rollback to previous deployments via Vercel
 
-### **Phase 1: Core Platform** ✅
-- User authentication and management
-- Team creation and collaboration
-- Basic project and task management
-- Subscription billing integration
+## 🏢 Team Development Strategy
 
-### **Phase 2: Advanced Features** 🔄
-- Real-time notifications
-- Advanced analytics dashboard
-- File sharing and commenting
-- Mobile application (React Native)
+### **For Small Teams (2-5 developers)**
+1. **Feature Branching**: Each feature developed in separate branches
+2. **Code Reviews**: All changes require peer review via pull requests
+3. **Shared Components**: Maintain a shared component library
+4. **Documentation**: Keep README and inline comments up to date
 
-### **Phase 3: Enterprise Features** 📋
-- SSO integration (SAML, OIDC)
-- Advanced security features
-- API rate limiting
-- Webhook integrations
+### **For Medium Teams (5-15 developers)**
+1. **Domain-Driven Design**: Organize features by business domains
+2. **Micro-frontends**: Consider splitting by functional areas
+3. **Design System**: Formal design system with Storybook
+4. **Testing Strategy**: Implement comprehensive testing pipeline
 
-### **Phase 4: AI Integration** 🤖
-- Automated task prioritization
-- Smart project insights
-- Predictive analytics
-- Natural language task creation
+### **For Large Teams (15+ developers)**
+1. **Monorepo Structure**: Use tools like Nx or Turborepo
+2. **Module Federation**: Independent deployment of features
+3. **Dedicated QA**: Separate quality assurance team
+4. **Performance Monitoring**: Real-time performance tracking
 
----
+## 🔮 Scaling to Production SaaS
 
-## 🤝 **Contributing**
+### **Technical Scaling**
+- **Database Optimization**: Query optimization and indexing strategies
+- **Caching Layer**: Redis for session and data caching
+- **CDN Strategy**: Global content delivery optimization
+- **Monitoring**: Application performance monitoring with Datadog/NewRelic
 
-### **Development Setup**
+### **Business Scaling**
+- **Analytics**: User behavior tracking with Mixpanel/Amplitude
+- **Customer Support**: Integration with Intercom/Zendesk
+- **Onboarding**: User onboarding flows and tutorials
+- **Documentation**: Comprehensive user and developer documentation
+
+### **Infrastructure Scaling**
+- **Multi-region Deployment**: Global application deployment
+- **Disaster Recovery**: Backup and recovery strategies
+- **Compliance**: SOC 2, GDPR, and other compliance requirements
+- **Security Audits**: Regular security assessments and penetration testing
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### **Development Workflow**
 1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open Pull Request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -m 'Add amazing feature'`
+5. Push to the branch: `git push origin feature/amazing-feature`
+6. Open a Pull Request
 
-### **Code Standards**
-- **TypeScript:** Strict mode enabled
-- **ESLint:** Airbnb configuration
-- **Prettier:** Automatic code formatting
-- **Husky:** Pre-commit hooks
+## 📝 License
 
----
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 **Support & Contact**
+## 🙏 Acknowledgments
 
-- **Documentation:** This README and inline code comments
-- **Issues:** GitHub Issues for bug reports
-- **Discussions:** GitHub Discussions for questions
-- **Security:** security@taskflow.dev for security issues
-
----
-
-## 🏆 **Tech Lead Demonstration**
-
-This project demonstrates **Tech Lead level capabilities** through:
-
-### **Technical Excellence**
-- ✅ Modern architecture decisions
-- ✅ Security best practices
-- ✅ Performance optimization
-- ✅ Code quality and testing
-
-### **Product Thinking**
-- ✅ User-centered design
-- ✅ Business model integration
-- ✅ Scalability planning
-- ✅ Feature prioritization
-
-### **Team Leadership**
-- ✅ Clear documentation
-- ✅ Onboarding processes
-- ✅ Development workflows
-- ✅ Knowledge sharing
-
-### **Business Impact**
-- ✅ Revenue model implementation
-- ✅ Analytics and metrics
-- ✅ Customer success features
-- ✅ Market-ready product
+- [Next.js](https://nextjs.org/) - The React framework for production
+- [Convex](https://convex.dev/) - Real-time backend platform
+- [Clerk](https://clerk.dev/) - Complete authentication solution
+- [Stripe](https://stripe.com/) - Payment processing platform
+- [shadcn/ui](https://ui.shadcn.com/) - Beautiful UI components
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
 ---
 
-**Built with ❤️ by a Tech Lead candidate who loves building amazing products that scale.**
+**Built with ❤️ for modern teams who value beautiful, functional software.**
 
-*Ready to lead your next engineering team to success! 🚀*
+For questions or support, please reach out via [GitHub Issues](https://github.com/varun8487/taskflow/issues).
