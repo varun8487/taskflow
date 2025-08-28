@@ -2,13 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  experimental: {
-    outputFileTracingRoot: undefined,
-  },
   // Disable static optimization for Docker builds
   trailingSlash: false,
-  // Enable SWC minification
-  swcMinify: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
