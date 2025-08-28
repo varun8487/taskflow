@@ -124,7 +124,7 @@ function DashboardPageContent() {
   };
 
   return (
-    <div className="min-h-screen px-8 py-6 space-y-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 pt-6 pb-12 space-y-6">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -132,9 +132,9 @@ function DashboardPageContent() {
         className="space-y-8"
       >
         {/* Professional Welcome Section */}
-        <motion.div variants={itemVariants} className="mb-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-6 lg:mb-0">
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
+            <div className="mb-6 lg:mb-0 flex-1">
               <h1 className="text-3xl lg:text-4xl font-bold text-gradient mb-3 tracking-tight">
                 Welcome back, {user.firstName || "there"}
               </h1>
@@ -142,7 +142,7 @@ function DashboardPageContent() {
                 Here&apos;s your productivity overview for today. Stay focused and achieve your goals.
               </p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 lg:flex-shrink-0">
               <Badge 
                 variant={isProUser ? "default" : "secondary"} 
                 className={`px-4 py-2 text-sm font-medium ${
@@ -186,7 +186,7 @@ function DashboardPageContent() {
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             {
               title: "Total Tasks",
@@ -258,7 +258,7 @@ function DashboardPageContent() {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Quick Actions */}
         <motion.div className="mb-8" variants={itemVariants}>
@@ -339,7 +339,7 @@ function DashboardPageContent() {
         </motion.div>
 
         {/* Teams and Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Teams */}
           <motion.div variants={itemVariants}>
             <Card className="glass-effect border-none shadow-xl glow-effect h-full">
@@ -450,7 +450,7 @@ function DashboardPageContent() {
               </CardContent>
             </Card>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );

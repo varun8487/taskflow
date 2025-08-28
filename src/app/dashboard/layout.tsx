@@ -63,7 +63,7 @@ export default function DashboardLayout({
           x: sidebarOpen ? 0 : "-100%",
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed inset-y-0 left-0 z-50 w-64 glass-effect border-r lg:translate-x-0 lg:static lg:inset-0"
+        className="fixed inset-y-0 left-0 z-50 w-64 glass-effect border-r lg:translate-x-0 lg:fixed lg:h-screen"
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
@@ -171,7 +171,7 @@ export default function DashboardLayout({
       </motion.div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 min-h-screen flex flex-col">
         {/* Mobile header */}
         <div className="sticky top-0 z-40 glass-effect border-b lg:hidden">
           <div className="flex h-16 items-center justify-between px-4">
@@ -211,7 +211,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Page content */}
-        <main className="relative min-h-screen">{children}</main>
+        <main className="flex-1 w-full">{children}</main>
       </div>
     </div>
   );
