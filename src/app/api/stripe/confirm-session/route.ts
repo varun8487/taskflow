@@ -3,10 +3,6 @@ import Stripe from 'stripe'
 import { ConvexHttpClient } from 'convex/browser'
 import { api } from '@/../convex/_generated/api'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-08-27.basil',
-})
-
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
 const convex = convexUrl ? new ConvexHttpClient(convexUrl) : null
 
@@ -18,6 +14,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Retrieve checkout session with expanded subscription and customer
+    const secret = process.env.STRIPE_SECRET_KEY
+    if (!secret) {
+      return NextResponse.json({ error: 'Stripe secret not configured' }, { status: 500 })
+    }
+    const stripe = new Stripe(secret, { apiVersion: '2025-08-27.basil' })
+
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],
     })

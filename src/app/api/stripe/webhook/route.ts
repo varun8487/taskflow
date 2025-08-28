@@ -3,16 +3,21 @@ import Stripe from 'stripe';
 import { ConvexHttpClient } from 'convex/browser';
 import { api } from '@/../convex/_generated/api';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-08-27.basil',
-});
-
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // This should be your webhook endpoint secret from Stripe Dashboard
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: NextRequest) {
+  const secret = process.env.STRIPE_SECRET_KEY
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  if (!secret || !webhookSecret) {
+    return NextResponse.json(
+      { error: 'Stripe secrets not configured' },
+      { status: 500 }
+    )
+  }
+  const stripe = new Stripe(secret, { apiVersion: '2025-08-27.basil' })
   const body = await req.text();
   const sig = req.headers.get('stripe-signature')!;
 
