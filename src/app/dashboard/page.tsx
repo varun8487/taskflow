@@ -60,7 +60,7 @@ function DashboardPageContent() {
     );
   }
 
-  const isProUser = convexUser?.subscription === "pro";
+  const isProUser = convexUser?.subscriptionTier === "pro";
   
   const completedTasks = userTasks?.filter(task => task.status === "completed").length || 0;
   const pendingTasks = userTasks?.filter(task => task.status !== "completed").length || 0;
@@ -172,7 +172,7 @@ function DashboardPageContent() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {teams?.length > 0 ? (
+                  {teams && teams.length > 0 ? (
                     teams.map((team) => (
                       <div key={team._id} className="flex items-center justify-between p-4 border rounded-lg bg-blue-50">
                         <div>

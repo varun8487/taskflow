@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from 'react';
+import { Id } from '@/../convex/_generated/dataModel';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -127,9 +128,9 @@ export default function FileUpload({
               url: `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileKey}`,
               size: file.size,
               type: file.type,
-              taskId: taskId || undefined,
-              projectId: projectId || undefined,
-              uploaderId: 'current-user', // This should be the actual user ID
+              taskId: taskId as Id<"tasks"> | undefined,
+              projectId: projectId as Id<"projects"> | undefined,
+              uploaderId: 'current-user' as Id<"users">, // This should be the actual user ID
               s3Key: fileKey,
             });
           } catch (dbError) {
@@ -140,8 +141,6 @@ export default function FileUpload({
         if (onUploadComplete) {
           onUploadComplete({
             name: file.name,
-            size: file.size,
-            type: file.type,
             key: fileKey,
             url: uploadUrl,
           });
