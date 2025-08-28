@@ -124,41 +124,54 @@ function DashboardPageContent() {
   };
 
   return (
-    <div className="px-6 pt-2 pb-8 space-y-6">
+    <div className="px-8 pt-6 pb-12 space-y-8">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="space-y-8"
       >
-        {/* Welcome Section */}
-        <motion.div className="mb-12" variants={itemVariants}>
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4">
-              Welcome back, {user.firstName || "there"}! 👋
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6">
-              Here&apos;s what&apos;s happening with your projects today.
-            </p>
-            <Badge 
-              variant={isProUser ? "default" : "secondary"} 
-              className={`text-lg px-6 py-3 ${
-                isProUser 
-                  ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-none shadow-lg" 
-                  : "glass-effect"
-              }`}
-            >
-              {isProUser ? (
-                <>
-                  <Crown className="w-5 h-5 mr-2" />
-                  Pro Plan
-                </>
-              ) : (
-                <>
-                  <Zap className="w-5 h-5 mr-2" />
-                  Starter Plan
-                </>
-              )}
-            </Badge>
+        {/* Professional Welcome Section */}
+        <motion.div variants={itemVariants} className="mb-10">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div className="mb-6 lg:mb-0">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gradient mb-3 tracking-tight">
+                Welcome back, {user.firstName || "there"}
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl">
+                Here&apos;s your productivity overview for today. Stay focused and achieve your goals.
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Badge 
+                variant={isProUser ? "default" : "secondary"} 
+                className={`px-4 py-2 text-sm font-medium ${
+                  isProUser 
+                    ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg" 
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {isProUser ? (
+                  <>
+                    <Crown className="w-4 h-4 mr-2" />
+                    Pro Plan
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 mr-2" />
+                    Starter Plan
+                  </>
+                )}
+              </Badge>
+              <div className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+            </div>
           </div>
         </motion.div>
 
