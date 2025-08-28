@@ -93,57 +93,31 @@ export default function BillingPage() {
   //   user ? { clerkId: user.id } : "skip"
   // );
 
-  // Mock subscription status - removed unused variable
+  // Simple Stripe Payment Links (direct)
+  const STRIPE_PAYMENT_LINKS: Record<string, string> = {
+    starter: "https://buy.stripe.com/test_4gM5kv3ZQ0oVdgqgpf5Ne00",
+    pro: "https://buy.stripe.com/test_28EaEPgMC7Rn2BM7SJ5Ne02",
+    enterprise: "https://buy.stripe.com/test_14A6oz3ZQ6Nj7W63Ct5Ne03",
+  };
 
-  // Note: Now using Checkout Sessions instead of Payment Links for better redirect control
-
-    const handleSubscribe = async (tier = 'pro') => {
+  const handleSubscribe = async (tier = 'pro') => {
     if (!user) return;
-    
     setLoading(true);
     try {
-      // Use checkout sessions for all tiers (better redirect control)
-      const response = await fetch('/api/stripe/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          userEmail: user.emailAddresses[0]?.emailAddress,
-          tier: tier,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const base = STRIPE_PAYMENT_LINKS[tier];
+      if (!base) {
+        alert('Invalid plan.');
+        return;
       }
-
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (data.url) {
-        // Direct redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else if (data.sessionId) {
-        // Use Stripe.js to redirect to checkout
-        const stripe = await stripePromise;
-        if (stripe) {
-          const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-          if (error) {
-            console.error('Stripe error:', error);
-            alert('Payment failed. Please try again.');
-          }
-        }
-      } else {
-        throw new Error('No checkout URL or session ID received');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert(`Payment initialization failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      const url = new URL(base);
+      // pass helpful context (optional)
+      url.searchParams.set('client_reference_id', user.id);
+      const email = user.emailAddresses[0]?.emailAddress;
+      if (email) url.searchParams.set('prefilled_email', email);
+      window.location.href = url.toString();
+    } catch (e) {
+      console.error(e);
+      alert('Payment initialization failed. Please try again.');
     } finally {
       setLoading(false);
     }
