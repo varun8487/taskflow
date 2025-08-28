@@ -194,8 +194,24 @@ export default function DashboardLayout({
           </div>
         </div>
 
+        {/* Desktop header */}
+        <div className="hidden lg:block sticky top-0 z-40 glass-effect border-b">
+          <div className="flex h-16 items-center justify-end px-8">
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8",
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Page content */}
-        <main className="relative">{children}</main>
+        <main className="relative min-h-screen">{children}</main>
       </div>
     </div>
   );

@@ -34,9 +34,9 @@ export default function BillingPage() {
   //   user ? { clerkId: user.id } : "skip"
   // );
 
-  // Mock convex user for now
+  // Mock convex user for now - Default to free plan
   const convexUser = { 
-    subscriptionTier: "starter", 
+    subscriptionTier: "free", 
     stripeCustomerId: null,
     stripeSubscriptionId: null 
   };
@@ -48,11 +48,31 @@ export default function BillingPage() {
 
   // Mock subscription status - removed unused variable
 
+    // Stripe payment links for each tier
+  const STRIPE_PAYMENT_LINKS = {
+    starter: "https://buy.stripe.com/test_4gM5kv3ZQ0oVdgqgpf5Ne00",
+    pro: "https://buy.stripe.com/test_28EaEPgMC7Rn2BM7SJ5Ne02",
+    enterprise: "https://buy.stripe.com/test_14A6oz3ZQ6Nj7W63Ct5Ne03"
+  };
+
   const handleSubscribe = async (tier = 'pro') => {
     if (!user) return;
     
     setLoading(true);
     try {
+      // Option 1: Use direct Stripe payment links for all tiers
+      const paymentLink = STRIPE_PAYMENT_LINKS[tier as keyof typeof STRIPE_PAYMENT_LINKS];
+      if (paymentLink) {
+        const url = new URL(paymentLink);
+        url.searchParams.append('client_reference_id', user.id);
+        if (user.emailAddresses[0]?.emailAddress) {
+          url.searchParams.append('prefilled_email', user.emailAddresses[0].emailAddress);
+        }
+        window.location.href = url.toString();
+        return;
+      }
+
+      // Option 2: Use checkout sessions for other tiers
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -75,11 +95,13 @@ export default function BillingPage() {
           const { error } = await stripe.redirectToCheckout({ sessionId });
           if (error) {
             console.error('Stripe error:', error);
+            alert('Payment failed. Please try again.');
           }
         }
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('Payment initialization failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -159,7 +181,7 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="min-h-screen p-6 space-y-8">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -198,12 +220,16 @@ export default function BillingPage() {
                   </div>
                   <div>
                     <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Current Plan: {isProUser ? "Pro" : "Starter"}
+                      Current Plan: {convexUser?.subscriptionTier ? convexUser.subscriptionTier.charAt(0).toUpperCase() + convexUser.subscriptionTier.slice(1) : "Free"}
                     </CardTitle>
                     <CardDescription className="text-lg text-gray-600 dark:text-gray-300 mt-1">
-                      {isProUser 
-                        ? "You have access to all premium features and priority support" 
-                        : "You&apos;re on the free plan with limited features"
+                      {convexUser?.subscriptionTier === "pro" 
+                        ? "You have access to all premium features and priority support"
+                        : convexUser?.subscriptionTier === "enterprise"
+                        ? "You have access to all enterprise features and dedicated support"
+                        : convexUser?.subscriptionTier === "starter"
+                        ? "You have access to starter features with basic analytics"
+                        : "You are on the free plan with limited features"
                       }
                     </CardDescription>
                   </div>
@@ -292,14 +318,14 @@ export default function BillingPage() {
                   ))}
                 </ul>
                 <div className="pt-4">
-                  {convexUser?.subscriptionTier === "free" ? (
-                    <Badge className="w-full text-center py-2 text-sm bg-gray-500 text-white">
+                  {convexUser?.subscriptionTier === "free" || !convexUser?.subscriptionTier ? (
+                    <Badge className="w-full text-center py-2 text-sm bg-gray-500 text-white border-none">
                       <Star className="w-3 h-3 mr-1" />
                       Current Plan
                     </Badge>
                   ) : (
-                    <Button variant="outline" className="w-full py-2 text-sm glass-effect" disabled>
-                      Downgrade
+                    <Button variant="outline" className="w-full py-2 text-sm glass-effect border-gray-300 text-gray-600" disabled>
+                      Current: Free Plan
                     </Button>
                   )}
                 </div>
@@ -346,17 +372,17 @@ export default function BillingPage() {
                 </ul>
                 <div className="pt-4">
                   {convexUser?.subscriptionTier === "starter" ? (
-                    <Badge className="w-full text-center py-2 text-sm bg-blue-500 text-white">
+                    <Badge className="w-full text-center py-2 text-sm bg-blue-500 text-white border-none">
                       <Star className="w-3 h-3 mr-1" />
                       Current Plan
                     </Badge>
                   ) : (
                     <Button 
-                      className="w-full py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white" 
+                      className="w-full py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white border-none shadow-md hover:shadow-lg transition-all" 
                       onClick={() => handleSubscribe("starter")}
-                      disabled={loading}
+                      disabled={loading || convexUser?.subscriptionTier === "pro" || convexUser?.subscriptionTier === "enterprise"}
                     >
-                      {loading ? "Loading..." : "Choose Starter"}
+                      {loading ? "Loading..." : convexUser?.subscriptionTier === "pro" || convexUser?.subscriptionTier === "enterprise" ? "Downgrade" : "Upgrade to Starter"}
                     </Button>
                   )}
                 </div>
@@ -423,11 +449,11 @@ export default function BillingPage() {
                     </Badge>
                   ) : (
                     <Button 
-                      className="w-full py-2 text-sm bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg" 
+                      className="w-full py-2 text-sm bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-none shadow-lg hover:shadow-xl transition-all" 
                       onClick={() => handleSubscribe("pro")}
-                      disabled={loading}
+                      disabled={loading || convexUser?.subscriptionTier === "enterprise"}
                     >
-                      {loading ? "Loading..." : "Choose Pro"}
+                      {loading ? "Loading..." : convexUser?.subscriptionTier === "enterprise" ? "Downgrade to Pro" : "Upgrade to Pro"}
                     </Button>
                   )}
                 </div>
@@ -455,7 +481,7 @@ export default function BillingPage() {
                     $99
                   </span>
                   <span className="text-lg text-gray-600 dark:text-gray-400 font-normal">/month</span>
-                </div>
+                      </div>
                 <CardDescription className="text-base mt-3 text-gray-600 dark:text-gray-300">
                   For large organizations
                 </CardDescription>
@@ -486,11 +512,11 @@ export default function BillingPage() {
                     </Badge>
                   ) : (
                     <Button 
-                      className="w-full py-2 text-sm bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white shadow-lg" 
+                      className="w-full py-2 text-sm bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white border-none shadow-lg hover:shadow-xl transition-all" 
                       onClick={() => handleSubscribe("enterprise")}
                       disabled={loading}
                     >
-                      {loading ? "Loading..." : "Choose Enterprise"}
+                      {loading ? "Loading..." : "Upgrade to Enterprise"}
                     </Button>
                   )}
                 </div>
@@ -506,7 +532,7 @@ export default function BillingPage() {
               Feature Comparison
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              See exactly what&apos;s included in each plan
+              See exactly what is included in each plan
             </p>
           </div>
           <Card className="glass-effect border-none shadow-xl glow-effect">

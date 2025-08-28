@@ -34,8 +34,8 @@ function DashboardPageContent() {
   // const teams = useQuery(api.teams.getTeamsByUser, convexUser ? { userId: convexUser._id } : "skip");
   // const userTasks = useQuery(api.tasks.getTasksByUser, convexUser ? { userId: convexUser._id } : "skip");
   
-  // Mock data for now
-  const convexUser = { subscriptionTier: "starter" };
+  // Mock data for now - Default to free plan
+  const convexUser = { subscriptionTier: "free" };
   const teams: unknown[] = [];
   // const userTasks: unknown[] = []; // Removed unused variable
 
@@ -124,7 +124,7 @@ function DashboardPageContent() {
   };
 
   return (
-    <div className="px-8 pt-6 pb-12 space-y-8">
+    <div className="min-h-screen px-8 py-6 space-y-8">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -156,10 +156,20 @@ function DashboardPageContent() {
                     <Crown className="w-4 h-4 mr-2" />
                     Pro Plan
                   </>
-                ) : (
+                ) : convexUser?.subscriptionTier === "starter" ? (
                   <>
                     <Zap className="w-4 h-4 mr-2" />
                     Starter Plan
+                  </>
+                ) : convexUser?.subscriptionTier === "enterprise" ? (
+                  <>
+                    <Crown className="w-4 h-4 mr-2" />
+                    Enterprise Plan
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 mr-2" />
+                    Free Plan
                   </>
                 )}
               </Badge>
