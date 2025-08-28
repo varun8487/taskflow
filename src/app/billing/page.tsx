@@ -1,10 +1,11 @@
 "use client";
 
-// Force dynamic rendering to prevent prerendering issues with Convex
+// Force dynamic rendering to prevent prerendering issues with Convex  
 export const dynamic = 'force-dynamic';
 
 import { useState } from "react";
-import React from "react";
+import React, { Suspense } from "react";
+import nextDynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
 // import { useQuery } from "convex/react";
 // import { api } from "@/../convex/_generated/api";
@@ -12,7 +13,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { 
   CheckCircle, 
@@ -756,10 +756,12 @@ function BillingContent() {
   );
 }
 
+// Dynamic import to prevent SSR issues with useSearchParams
+const DynamicBillingContent = nextDynamic(() => Promise.resolve(BillingContent), {
+  ssr: false,
+  loading: () => <div className="min-h-screen flex items-center justify-center"><div className="text-lg">Loading...</div></div>
+});
+
 export default function BillingPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen p-6" />}> 
-      <BillingContent />
-    </Suspense>
-  );
+  return <DynamicBillingContent />;
 }
