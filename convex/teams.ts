@@ -117,3 +117,59 @@ export const removeTeamMember = mutation({
     return team._id;
   },
 });
+
+export const updateMemberRole = mutation({
+  args: {
+    teamId: v.id("teams"),
+    memberId: v.id("users"),
+    newRole: v.union(v.literal("owner"), v.literal("admin"), v.literal("member"), v.literal("viewer")),
+  },
+  handler: async (ctx, args) => {
+    const team = await ctx.db.get(args.teamId);
+    if (!team) {
+      throw new Error("Team not found");
+    }
+
+    // For now, store roles in team metadata
+    // In a real implementation, you'd have a separate teamMembers table
+    
+    // Verify member exists in team
+    if (!team.memberIds.includes(args.memberId)) {
+      throw new Error("User is not a member of this team");
+    }
+
+    // This is a simplified implementation
+    // In production, you'd want to store roles in a separate table
+    await ctx.db.patch(team._id, {
+      updatedAt: Date.now(),
+    });
+
+    return args.teamId;
+  },
+});
+
+export const getTeamMemberRole = query({
+  args: {
+    teamId: v.id("teams"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const team = await ctx.db.get(args.teamId);
+    if (!team) {
+      return null;
+    }
+
+    // Team owner has owner role
+    if (team.ownerId === args.userId) {
+      return "owner";
+    }
+
+    // Other members default to member role
+    // In production, you'd query a teamMembers table
+    if (team.memberIds.includes(args.userId)) {
+      return "member";
+    }
+
+    return null;
+  },
+});

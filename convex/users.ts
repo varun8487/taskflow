@@ -20,8 +20,8 @@ export const createUser = mutation({
 
     const userId = await ctx.db.insert("users", {
       ...args,
-      subscriptionTier: "starter",
-      subscriptionStatus: "inactive",
+      subscriptionTier: "free",
+      subscriptionStatus: "active",
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -43,7 +43,7 @@ export const getUserByClerkId = query({
 export const updateUserSubscription = mutation({
   args: {
     clerkId: v.string(),
-    subscriptionTier: v.union(v.literal("starter"), v.literal("pro")),
+    subscriptionTier: v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("enterprise")),
     subscriptionStatus: v.union(
       v.literal("active"), 
       v.literal("inactive"), 

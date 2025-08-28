@@ -84,11 +84,9 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-4">
-                <img
-                  src={user.imageUrl}
-                  alt={user.fullName || "Profile"}
-                  className="w-16 h-16 rounded-full"
-                />
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl">
+                  {user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || 'U'}
+                </div>
                 <div>
                   <h3 className="text-lg font-semibold">{user.fullName || "No name set"}</h3>
                   <p className="text-gray-600">{user.emailAddresses[0]?.emailAddress}</p>

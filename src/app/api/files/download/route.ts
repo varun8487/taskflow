@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { generatePresignedDownloadUrl } from '@/lib/s3';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET(req: NextRequest) {
   try {
     const { userId } = await auth();
     
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     const { searchParams } = new URL(req.url);
@@ -20,11 +23,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // TODO: Add additional authorization checks here
-    // For example, verify that the user has access to the file
-    // This would involve checking if the file belongs to a project/task the user has access to
+    // TODO: Verify user has access to this file
+    // Check if file belongs to user or if user has access via team/project
 
-    // Generate presigned download URL
     const downloadUrl = await generatePresignedDownloadUrl(fileKey);
 
     return NextResponse.json({

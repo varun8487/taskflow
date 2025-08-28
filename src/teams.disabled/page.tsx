@@ -49,7 +49,7 @@ export default function TeamsPage() {
   );
 
   const canCreateMoreTeams = convexUser && teams 
-    ? isWithinLimit(tier, "maxTeamMembers", teams.length)
+    ? isWithinLimit(tier as "starter" | "pro", "maxTeamMembers", teams.length)
     : false;
 
   const copyInviteCode = (code: string) => {

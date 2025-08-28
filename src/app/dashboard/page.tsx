@@ -37,7 +37,7 @@ function DashboardPageContent() {
   // Mock data for now
   const convexUser = { subscriptionTier: "starter" };
   const teams: unknown[] = [];
-  const userTasks: unknown[] = [];
+  // const userTasks: unknown[] = []; // Removed unused variable
 
   if (!user) {
     return (

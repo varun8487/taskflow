@@ -17,9 +17,6 @@ import {
   Crown, 
   Zap,
   Shield,
-  Users,
-  BarChart3,
-  Upload,
   Sparkles,
   Star
 } from "lucide-react";
@@ -49,10 +46,9 @@ export default function BillingPage() {
   //   user ? { clerkId: user.id } : "skip"
   // );
 
-  // Mock subscription status
-  const subscriptionStatus = null;
+  // Mock subscription status - removed unused variable
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (tier = 'pro') => {
     if (!user) return;
     
     setLoading(true);
@@ -65,17 +61,21 @@ export default function BillingPage() {
         body: JSON.stringify({
           userId: user.id,
           userEmail: user.emailAddresses[0]?.emailAddress,
-          priceId: 'price_pro_monthly', // We'll create this in Stripe
+          tier: tier,
         }),
       });
 
-      const { sessionId } = await response.json();
+      const { sessionId, url } = await response.json();
       
-      const stripe = await stripePromise;
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          console.error('Stripe error:', error);
+      if (url) {
+        window.location.href = url;
+      } else if (sessionId) {
+        const stripe = await stripePromise;
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({ sessionId });
+          if (error) {
+            console.error('Stripe error:', error);
+          }
         }
       }
     } catch (error) {
@@ -254,51 +254,109 @@ export default function BillingPage() {
         </motion.div>
 
         {/* Pricing Plans */}
-        <motion.div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12" variants={itemVariants}>
+        <motion.div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12" variants={itemVariants}>
+          {/* Free Plan */}
+          <motion.div
+            whileHover={{ y: -5, scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className={`h-full glass-effect border-none shadow-xl glow-effect ${
+              convexUser?.subscriptionTier === "free" ? "ring-2 ring-gray-500 dark:ring-gray-400" : ""
+            }`}>
+              <CardHeader className="text-center pb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Free</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold text-gray-900 dark:text-white">$0</span>
+                  <span className="text-lg text-gray-600 dark:text-gray-400 font-normal">/month</span>
+                </div>
+                <CardDescription className="text-base mt-3 text-gray-600 dark:text-gray-300">
+                  Perfect for individuals getting started
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
+                  {[
+                    "1 team",
+                    "3 projects", 
+                    "10 tasks per project",
+                    "5MB file uploads",
+                    "Email support"
+                  ].map((feature, index) => (
+                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="pt-4">
+                  {convexUser?.subscriptionTier === "free" ? (
+                    <Badge className="w-full text-center py-2 text-sm bg-gray-500 text-white">
+                      <Star className="w-3 h-3 mr-1" />
+                      Current Plan
+                    </Badge>
+                  ) : (
+                    <Button variant="outline" className="w-full py-2 text-sm glass-effect" disabled>
+                      Downgrade
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Starter Plan */}
           <motion.div
             whileHover={{ y: -5, scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <Card className={`h-full glass-effect border-none shadow-xl glow-effect ${
-              !isProUser ? "ring-2 ring-blue-500 dark:ring-blue-400" : ""
+              convexUser?.subscriptionTier === "starter" ? "ring-2 ring-blue-500 dark:ring-blue-400" : ""
             }`}>
               <CardHeader className="text-center pb-6">
-                <div className="w-20 h-20 bg-gradient-to-r from-gray-500 to-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Zap className="w-10 h-10 text-white" />
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Starter</CardTitle>
-                <div className="mt-6">
-                  <span className="text-5xl font-bold text-gray-900 dark:text-white">Free</span>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Starter</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold text-blue-600">$12</span>
+                  <span className="text-lg text-gray-600 dark:text-gray-400 font-normal">/month</span>
                 </div>
-                <CardDescription className="text-lg mt-4 text-gray-600 dark:text-gray-300">
-                  Perfect for small teams getting started
+                <CardDescription className="text-base mt-3 text-gray-600 dark:text-gray-300">
+                  Great for small teams
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <ul className="space-y-4">
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
                   {[
-                    "Up to 3 team members",
-                    "5 projects maximum", 
-                    "Basic task management",
-                    "Real-time collaboration",
+                    "3 teams",
+                    "10 projects", 
+                    "50 tasks per project",
+                    "25MB file uploads",
+                    "Basic analytics",
                     "Email support"
                   ].map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                      <span className="font-medium">{feature}</span>
+                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="pt-6">
-                  {!isProUser ? (
-                    <Badge className="w-full text-center py-3 text-lg bg-blue-500 hover:bg-blue-600">
-                      <Star className="w-4 h-4 mr-2" />
+                <div className="pt-4">
+                  {convexUser?.subscriptionTier === "starter" ? (
+                    <Badge className="w-full text-center py-2 text-sm bg-blue-500 text-white">
+                      <Star className="w-3 h-3 mr-1" />
                       Current Plan
                     </Badge>
                   ) : (
-                    <Button variant="outline" className="w-full py-3 text-lg glass-effect" disabled>
-                      Downgrade (Contact Support)
+                    <Button 
+                      className="w-full py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white" 
+                      onClick={() => handleSubscribe("starter")}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Choose Starter"}
                     </Button>
                   )}
                 </div>
@@ -312,82 +370,127 @@ export default function BillingPage() {
             transition={{ type: "spring", stiffness: 300 }}
             className="relative"
           >
-            {!isProUser && (
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-none px-4 py-2 text-sm">
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  Recommended
+            {convexUser?.subscriptionTier !== "pro" && convexUser?.subscriptionTier !== "enterprise" && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-none px-3 py-1 text-xs">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Popular
                 </Badge>
               </div>
             )}
             <Card className={`h-full glass-effect border-none shadow-xl glow-effect ${
-              isProUser 
-                ? "ring-2 ring-yellow-500 dark:ring-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20" 
-                : "ring-2 ring-blue-500 dark:ring-blue-400"
+              convexUser?.subscriptionTier === "pro" 
+                ? "ring-2 ring-purple-500 dark:ring-purple-400 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20" 
+                : "ring-2 ring-purple-500 dark:ring-purple-400"
             }`}>
               <CardHeader className="text-center pb-6">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-glow">
-                  <Crown className="w-10 h-10 text-white" />
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-glow">
+                  <Crown className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
-                <div className="mt-6">
-                  <span className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Pro</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     $29
                   </span>
-                  <span className="text-xl text-gray-600 dark:text-gray-400 font-normal">/month</span>
+                  <span className="text-lg text-gray-600 dark:text-gray-400 font-normal">/month</span>
                 </div>
-                <CardDescription className="text-lg mt-4 text-gray-600 dark:text-gray-300">
-                  For growing teams that need advanced features
+                <CardDescription className="text-base mt-3 text-gray-600 dark:text-gray-300">
+                  Perfect for growing teams
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <ul className="space-y-4">
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
                   {[
-                    { text: "Unlimited team members", icon: <Users className="w-4 h-4" /> },
-                    { text: "Unlimited projects", icon: <Shield className="w-4 h-4" /> },
-                    { text: "Advanced analytics & reports", icon: <BarChart3 className="w-4 h-4" /> },
-                    { text: "File uploads & sharing (10GB)", icon: <Upload className="w-4 h-4" /> },
-                    { text: "Priority support", icon: <Crown className="w-4 h-4" /> },
-                    { text: "Custom integrations", icon: <Sparkles className="w-4 h-4" /> }
+                    "10 teams",
+                    "50 projects",
+                    "200 tasks per project", 
+                    "100MB file uploads",
+                    "Advanced analytics",
+                    "Priority support",
+                    "API access"
                   ].map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                      <div className="flex items-center">
-                        <span className="text-blue-500 mr-2">{feature.icon}</span>
-                        <span className="font-medium">{feature.text}</span>
-                      </div>
+                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="pt-6">
-                  {isProUser ? (
-                    <Badge className="w-full text-center py-3 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-none">
-                      <Crown className="w-4 h-4 mr-2" />
+                <div className="pt-4">
+                  {convexUser?.subscriptionTier === "pro" ? (
+                    <Badge className="w-full text-center py-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none">
+                      <Crown className="w-3 h-3 mr-1" />
                       Current Plan
                     </Badge>
                   ) : (
                     <Button 
-                      className="w-full py-3 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg glow-effect" 
-                      onClick={handleSubscribe}
+                      className="w-full py-2 text-sm bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg" 
+                      onClick={() => handleSubscribe("pro")}
                       disabled={loading}
                     >
-                      {loading ? (
-                        <>
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="mr-2"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                          </motion.div>
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Crown className="w-4 h-4 mr-2" />
-                          Upgrade to Pro
-                        </>
-                      )}
+                      {loading ? "Loading..." : "Choose Pro"}
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Enterprise Plan */}
+          <motion.div
+            whileHover={{ y: -5, scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Card className={`h-full glass-effect border-none shadow-xl glow-effect ${
+              convexUser?.subscriptionTier === "enterprise" 
+                ? "ring-2 ring-yellow-500 dark:ring-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20" 
+                : ""
+            }`}>
+              <CardHeader className="text-center pb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Enterprise</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                    $99
+                  </span>
+                  <span className="text-lg text-gray-600 dark:text-gray-400 font-normal">/month</span>
+                </div>
+                <CardDescription className="text-base mt-3 text-gray-600 dark:text-gray-300">
+                  For large organizations
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
+                  {[
+                    "Unlimited teams",
+                    "Unlimited projects",
+                    "Unlimited tasks", 
+                    "500MB file uploads",
+                    "Advanced security",
+                    "Dedicated support",
+                    "Custom integrations",
+                    "SSO & compliance"
+                  ].map((feature, index) => (
+                    <li key={index} className="flex items-center text-gray-700 dark:text-gray-300 text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="pt-4">
+                  {convexUser?.subscriptionTier === "enterprise" ? (
+                    <Badge className="w-full text-center py-2 text-sm bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-none">
+                      <Shield className="w-3 h-3 mr-1" />
+                      Current Plan
+                    </Badge>
+                  ) : (
+                    <Button 
+                      className="w-full py-2 text-sm bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white shadow-lg" 
+                      onClick={() => handleSubscribe("enterprise")}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Choose Enterprise"}
                     </Button>
                   )}
                 </div>
@@ -412,34 +515,52 @@ export default function BillingPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left p-6 font-bold text-lg text-gray-900 dark:text-white">Feature</th>
-                      <th className="text-center p-6 font-bold text-lg text-gray-900 dark:text-white">
+                      <th className="text-left p-4 font-bold text-base text-gray-900 dark:text-white">Feature</th>
+                      <th className="text-center p-4 font-bold text-base text-gray-900 dark:text-white">
                         <div className="flex items-center justify-center">
-                          <Zap className="w-5 h-5 mr-2 text-gray-500" />
+                          <Zap className="w-4 h-4 mr-1 text-gray-500" />
+                          Free
+                        </div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-base text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-center">
+                          <Zap className="w-4 h-4 mr-1 text-blue-500" />
                           Starter
                         </div>
                       </th>
-                      <th className="text-center p-6 font-bold text-lg text-gray-900 dark:text-white">
+                      <th className="text-center p-4 font-bold text-base text-gray-900 dark:text-white">
                         <div className="flex items-center justify-center">
-                          <Crown className="w-5 h-5 mr-2 text-yellow-500" />
+                          <Crown className="w-4 h-4 mr-1 text-purple-500" />
                           Pro
+                        </div>
+                      </th>
+                      <th className="text-center p-4 font-bold text-base text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-center">
+                          <Shield className="w-4 h-4 mr-1 text-yellow-500" />
+                          Enterprise
                         </div>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      { feature: "Team Members", starter: "3", pro: "Unlimited" },
-                      { feature: "Projects", starter: "5", pro: "Unlimited" },
-                      { feature: "File Storage", starter: "100MB", pro: "10GB" },
-                      { feature: "Analytics", starter: "Basic", pro: "Advanced" },
-                      { feature: "Support", starter: "Email", pro: "Priority" },
-                      { feature: "Custom Integrations", starter: "❌", pro: "✅" }
+                      { feature: "Teams", free: "1", starter: "3", pro: "10", enterprise: "Unlimited" },
+                      { feature: "Projects", free: "3", starter: "10", pro: "50", enterprise: "Unlimited" },
+                      { feature: "Tasks per Project", free: "10", starter: "50", pro: "200", enterprise: "Unlimited" },
+                      { feature: "File Upload Size", free: "5MB", starter: "25MB", pro: "100MB", enterprise: "500MB" },
+                      { feature: "Storage", free: "1GB", starter: "10GB", pro: "100GB", enterprise: "1TB" },
+                      { feature: "Analytics", free: "❌", starter: "Basic", pro: "Advanced", enterprise: "Advanced" },
+                      { feature: "Priority Support", free: "❌", starter: "❌", pro: "✅", enterprise: "✅" },
+                      { feature: "API Access", free: "❌", starter: "❌", pro: "✅", enterprise: "✅" },
+                      { feature: "Advanced Security", free: "❌", starter: "❌", pro: "Basic", enterprise: "Advanced" },
+                      { feature: "Custom Integrations", free: "❌", starter: "❌", pro: "✅", enterprise: "✅" }
                     ].map((row, index) => (
                       <tr key={index} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td className="p-6 font-medium text-gray-900 dark:text-white">{row.feature}</td>
-                        <td className="text-center p-6 text-gray-700 dark:text-gray-300">{row.starter}</td>
-                        <td className="text-center p-6 font-semibold text-blue-600 dark:text-blue-400">{row.pro}</td>
+                        <td className="p-4 font-medium text-gray-900 dark:text-white text-sm">{row.feature}</td>
+                        <td className="text-center p-4 text-gray-700 dark:text-gray-300 text-sm">{row.free}</td>
+                        <td className="text-center p-4 text-gray-700 dark:text-gray-300 text-sm">{row.starter}</td>
+                        <td className="text-center p-4 font-semibold text-purple-600 dark:text-purple-400 text-sm">{row.pro}</td>
+                        <td className="text-center p-4 font-semibold text-yellow-600 dark:text-yellow-400 text-sm">{row.enterprise}</td>
                       </tr>
                     ))}
                   </tbody>

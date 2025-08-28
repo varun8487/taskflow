@@ -40,7 +40,7 @@ export default function NewTeamPage() {
   const createTeam = useMutation(api.teams.createTeam);
 
   const canCreateTeam = convexUser && teams 
-    ? isWithinLimit(tier, "maxTeamMembers", teams.length)
+    ? isWithinLimit(tier as "starter" | "pro", "maxTeamMembers", teams.length)
     : false;
 
   const handleSubmit = async (e: React.FormEvent) => {

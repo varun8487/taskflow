@@ -16,11 +16,8 @@ import {
   Rocket, 
   Star, 
   Play, 
-  TrendingUp, 
   Target,
   Award,
-  Clock,
-  Layers,
   ChevronRight
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";

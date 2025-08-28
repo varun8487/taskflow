@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { generatePresignedUploadUrl, generateFileKey } from '@/lib/s3';
+import { auth } from '@clerk/nextjs/server';
 
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     const { fileName, fileType, fileSize } = await req.json();
@@ -19,25 +22,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check file size limits (10GB for Pro, 1MB for Starter)
-    const maxFileSizeMB = process.env.NODE_ENV === 'production' ? 10 * 1024 : 100; // 10GB in MB for prod, 100MB for dev
-    const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
-
-    if (fileSize > maxFileSizeBytes) {
+    // Check file size limits based on subscription tier
+    // TODO: Implement subscription-based file size limits
+    const maxFileSizeMB = 100; // Default to 100MB for now
+    if (fileSize > maxFileSizeMB * 1024 * 1024) {
       return NextResponse.json(
-        { error: `File size exceeds limit of ${maxFileSizeMB}MB` },
+        { error: `File size exceeds ${maxFileSizeMB}MB limit` },
         { status: 400 }
       );
     }
 
-    // Generate unique file key
     const fileKey = generateFileKey(userId, fileName);
-
-    // Generate presigned upload URL
-    const uploadUrl = await generatePresignedUploadUrl(fileKey, fileType);
+    const presignedUrl = await generatePresignedUploadUrl(fileKey, fileType);
 
     return NextResponse.json({
-      uploadUrl,
+      presignedUrl,
       fileKey,
       fileName,
       fileType,

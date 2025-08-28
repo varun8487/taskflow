@@ -20,7 +20,7 @@ import {
   AlertCircle,
   MoreHorizontal
 } from "lucide-react";
-import Link from "next/link";
+// import Link from "next/link"; // Removed unused import
 import { motion } from "framer-motion";
 
 export default function ProjectsPage() {

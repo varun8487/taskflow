@@ -44,7 +44,7 @@ export default function NewTeamPage() {
   const convexUser = { _id: "mock-id" };
   const teams = [];
   const isPro = false;
-  const tier = "starter";
+  // const tier = "starter"; // Removed unused variable
   const canCreateTeam = true;
 
   const handleSubmit = async (e: React.FormEvent) => {

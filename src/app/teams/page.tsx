@@ -7,21 +7,17 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 // import { useQuery } from "convex/react";
 // import { api } from "@/../convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   Users, 
   Plus, 
-  Settings, 
   Crown,
   Search,
-  UserPlus,
-  Copy,
-  CheckCircle
+  UserPlus
 } from "lucide-react";
 import Link from "next/link";
 // import { useSubscription, isWithinLimit } from "@/lib/subscription";
@@ -32,7 +28,7 @@ export default function TeamsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
-  const [copiedInvite, setCopiedInvite] = useState<string | null>(null);
+  // const [copiedInvite, setCopiedInvite] = useState<string | null>(null); // Removed unused variable
   
   // Mock subscription data
   const isPro = false;
@@ -57,11 +53,11 @@ export default function TeamsPage() {
 
   const canCreateMoreTeams = true; // Mock for now
 
-  const copyInviteCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedInvite(code);
-    setTimeout(() => setCopiedInvite(null), 2000);
-  };
+  // const copyInviteCode = (code: string) => {
+  //   navigator.clipboard.writeText(code);
+  //   setCopiedInvite(code);
+  //   setTimeout(() => setCopiedInvite(null), 2000);
+  // }; // Removed unused function
 
   if (!user || !convexUser) {
     return (

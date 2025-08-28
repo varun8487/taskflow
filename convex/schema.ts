@@ -7,7 +7,7 @@ export default defineSchema({
     email: v.string(),
     name: v.string(),
     avatar: v.optional(v.string()),
-    subscriptionTier: v.union(v.literal("starter"), v.literal("pro")),
+    subscriptionTier: v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("enterprise")),
     subscriptionStatus: v.union(
       v.literal("active"), 
       v.literal("inactive"), 
