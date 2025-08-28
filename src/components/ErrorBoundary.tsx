@@ -55,7 +55,7 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
           <p className="text-gray-600 mb-4">
-            We encountered an unexpected error. Please try again. If the issue persists, contact support.
+            {error?.message || 'An unexpected authentication error occurred.'}
           </p>
           <div className="flex space-x-3">
             <Button onClick={resetError} variant="outline" className="flex-1">
