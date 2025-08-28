@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${req.nextUrl.origin}/billing?success=true&tier=${tier}`,
+      success_url: `${req.nextUrl.origin}/billing?success=true&tier=${tier}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.nextUrl.origin}/billing?canceled=true`,
       metadata: {
         clerkUserId: userId,

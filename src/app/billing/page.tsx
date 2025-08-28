@@ -47,19 +47,28 @@ export default function BillingPage() {
     const success = urlParams.get('success');
     const canceled = urlParams.get('canceled');
     const tier = urlParams.get('tier');
+    const sessionId = urlParams.get('session_id');
+    
+    console.log('URL Parameters:', { success, canceled, tier, sessionId }); // Debug log
     
     if (success === 'true' && tier) {
+      console.log('Processing successful payment for tier:', tier); // Debug log
       setShowSuccess(true);
       setMockSubscriptionTier(tier); // Simulate successful subscription
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Clean URL after a brief delay to ensure the user sees the success message
+      setTimeout(() => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }, 100);
     }
     
     if (canceled === 'true') {
+      console.log('Processing canceled payment'); // Debug log
       setShowCancel(true);
-      setTimeout(() => setShowCancel(false), 5000);
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => {
+        setShowCancel(false);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }, 5000);
     }
   }, []);
 
@@ -77,37 +86,14 @@ export default function BillingPage() {
 
   // Mock subscription status - removed unused variable
 
-    // Stripe payment links for each tier
-  const STRIPE_PAYMENT_LINKS = {
-    starter: "https://buy.stripe.com/test_4gM5kv3ZQ0oVdgqgpf5Ne00",
-    pro: "https://buy.stripe.com/test_28EaEPgMC7Rn2BM7SJ5Ne02",
-    enterprise: "https://buy.stripe.com/test_14A6oz3ZQ6Nj7W63Ct5Ne03"
-  };
+  // Note: Now using Checkout Sessions instead of Payment Links for better redirect control
 
-  const handleSubscribe = async (tier = 'pro') => {
+    const handleSubscribe = async (tier = 'pro') => {
     if (!user) return;
     
     setLoading(true);
     try {
-      // Option 1: Use direct Stripe payment links for all tiers
-      const paymentLink = STRIPE_PAYMENT_LINKS[tier as keyof typeof STRIPE_PAYMENT_LINKS];
-      if (paymentLink) {
-        const url = new URL(paymentLink);
-        url.searchParams.append('client_reference_id', user.id);
-        if (user.emailAddresses[0]?.emailAddress) {
-          url.searchParams.append('prefilled_email', user.emailAddresses[0].emailAddress);
-        }
-        
-        // Add success and cancel URLs for proper redirects
-        const baseUrl = window.location.origin;
-        url.searchParams.append('success_url', `${baseUrl}/billing?success=true&tier=${tier}`);
-        url.searchParams.append('cancel_url', `${baseUrl}/billing?canceled=true`);
-        
-        window.location.href = url.toString();
-        return;
-      }
-
-      // Option 2: Use checkout sessions for other tiers
+      // Use checkout sessions for all tiers (better redirect control)
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -120,23 +106,35 @@ export default function BillingPage() {
         }),
       });
 
-      const { sessionId, url } = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       
-      if (url) {
-        window.location.href = url;
-      } else if (sessionId) {
-      const stripe = await stripePromise;
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          console.error('Stripe error:', error);
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.url) {
+        // Direct redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else if (data.sessionId) {
+        // Use Stripe.js to redirect to checkout
+        const stripe = await stripePromise;
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+          if (error) {
+            console.error('Stripe error:', error);
             alert('Payment failed. Please try again.');
           }
         }
+      } else {
+        throw new Error('No checkout URL or session ID received');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Payment initialization failed. Please try again.');
+      alert(`Payment initialization failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
     } finally {
       setLoading(false);
     }
@@ -734,6 +732,27 @@ export default function BillingPage() {
                 <strong>Test Cards:</strong><br/>
                 Success: 4242 4242 4242 4242<br/>
                 Decline: 4000 0000 0000 0002
+              </div>
+              <div className="space-y-2 mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setShowSuccess(true);
+                    setMockSubscriptionTier('pro');
+                  }}
+                  className="w-full text-xs border-green-300 text-green-700 hover:bg-green-50"
+                >
+                  🧪 Test Success Message
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowCancel(true)}
+                  className="w-full text-xs border-orange-300 text-orange-700 hover:bg-orange-50"
+                >
+                  🧪 Test Cancel Message
+                </Button>
               </div>
             </CardContent>
           </Card>
