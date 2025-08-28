@@ -124,7 +124,7 @@ function DashboardPageContent() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="px-6 pt-2 pb-8 space-y-6">
       <motion.div
         variants={containerVariants}
         initial="hidden"

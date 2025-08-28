@@ -15,10 +15,19 @@ import {
   X,
   Zap,
   Sparkles,
+  Users,
+  FolderOpen,
+  BarChart3,
+  CreditCard,
+  Crown,
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Teams", href: "/teams", icon: Users },
+  { name: "Projects", href: "/projects", icon: FolderOpen },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, pro: true },
+  { name: "Billing", href: "/billing", icon: CreditCard },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -113,7 +122,17 @@ export default function DashboardLayout({
                       isActive ? "text-white" : ""
                     )} />
                     <span className="relative z-10">{item.name}</span>
-
+                    {item.pro && (
+                      <motion.div
+                        className="ml-auto relative z-10"
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        <span className="text-xs bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-full flex items-center">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Pro
+                        </span>
+                      </motion.div>
+                    )}
                   </Link>
                 </motion.div>
               );
